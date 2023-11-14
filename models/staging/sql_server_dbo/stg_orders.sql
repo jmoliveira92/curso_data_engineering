@@ -4,6 +4,4 @@ with orders as(
     from {{ source('sql_server_dbo', 'orders') }}
 )
 
-select * from orders
-
-
+select *  from orders
