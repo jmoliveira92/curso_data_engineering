@@ -8,7 +8,7 @@ dim_products as (
         {{dbt_utils.generate_surrogate_key(['product_id'])}} as product_sk,
         product_id,
         product_name,
-        product_price_usd,
+        unit_price_usd,
         inventory
     from stg_products
     order by 3
