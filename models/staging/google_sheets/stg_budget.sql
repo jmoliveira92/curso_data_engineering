@@ -1,7 +1,7 @@
 with src_budget_products as(
 
     select *
-    from {{ source('google_sheets', 'budget') }}
+    from {{ source('src_google_sheets', 'budget') }}
 ),
 
 budget AS (
@@ -12,6 +12,7 @@ budget AS (
         , month
         , _fivetran_synced AS date_load
     FROM src_budget_products
+    order by month asc
     )
 
 select * from budget

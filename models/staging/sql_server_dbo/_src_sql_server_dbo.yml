@@ -1,8 +1,8 @@
 version: 2
 
 sources:
-  - name: sql_server_dbo # name of the source
-    description: XXXXXXXX
+  - name: src_sql_server_dbo # name of the source
+    description: source database from snowflake datawarehouse.
 
     schema: sql_server_dbo # this is the schema our raw data lives in
     database: ALUMNO25_DEV_BRONZE_DB # this is the name of our database
@@ -19,38 +19,39 @@ sources:
     tables:
       - name: addresses
         loaded_at_field: _fivetran_synced
-        description: XXXXXXXX
+        description: a table who shows addresses from the users/customers who did orders or interact with the website.
         columns:
           - name: address_id
-            description: XXXXXXXXX
+            description: a primary key from the source database.
             tests:
               - unique
               - not_null
 
           - name: zipcode
-            description: XXXXXXXXXX
+            description: the zipcode where an address is located.
             tests:
               - not_null
 
           - name: country
-            description: XXXXXXXXXX
+            description: the country where an address is located.
             tests:
               - not_null
 
           - name: address
-            description: XXXXXXXXXX
+            description: the address (street, number, apartment_no,...) of an user/customer.
             tests:
               - not_null
 
           - name: state
-            description: XXXXXXXXXX
+            description: the state where an address is located.
             tests:
               - not_null
 
           - name: _fivetran_deleted
             description: XXXXXXXXXX
+
           - name: _fivetran_synced
-            description: XXXXXXXXXXXXXXXXXXXX
+            description: shows the timestamp in which a record was loaded to the source table.
 
       - name: events
         loaded_at_field: _fivetran_synced
@@ -111,8 +112,9 @@ sources:
             
           - name: _fivetran_deleted
             description: XXXXXXXXXX
+
           - name: _fivetran_synced
-            description: XXXXXXXXXX
+            description: shows the timestamp in which a record was loaded to the source table.
             tests:
               - not_null
 
@@ -191,18 +193,18 @@ sources:
 
           - name: _fivetran_deleted
             description: XXXXXXXXXX
+
           - name: _fivetran_synced
-            description: XXXXXXXXXX
+            description: shows the timestamp in which a record was loaded to the source table.
             tests:
               - not_null
 
       - name: order_items
         loaded_at_field: _fivetran_synced
-        description: XXXXXXXXXX
-
+        description: order_items is a sale order details of an order. Therefore the granularity of this table is the most refined one, meaning that decompose a order (sale) at the individual product level (each order_id can have several products).
         columns:
           - name: order_id
-            description: XXXXXXXXXX
+            description: the primary key for each order (it is the source primary key).
             tests:
               - not_null
               - relationships:
@@ -210,7 +212,7 @@ sources:
                   field: order_id
 
           - name: product_id
-            description: XXXXXXXXXX
+            description: the primary key for each product (it is the source primary key).
             tests:
               - not_null
               - relationships:
@@ -226,7 +228,7 @@ sources:
             description: XXXXXXXXXX
 
           - name: _fivetran_synced
-            description: XXXXXXXXXX
+            description: shows the timestamp in which a record was loaded to the source table.
             tests:
               - not_null
 
@@ -236,7 +238,7 @@ sources:
 
         columns:
           - name: product_id
-            description: XXXXXXXXXX
+            description: the primary key for each product (it is the source primary key).
             tests:
               - not_null
               - unique
@@ -257,17 +259,17 @@ sources:
             description: XXXXXXXXXX
 
           - name: _fivetran_synced
-            description: XXXXXXXXXX
+            description: shows the timestamp in which a record was loaded to the source table.
             tests:
               - not_null
 
       - name: promos
         loaded_at_field: _fivetran_synced
-        description: XXXXXXXXXX
+        description: represents a table with the promos information. A promotion is in enable when the "status" in labled "active"
 
         columns:
           - name: promo_id
-            description: XXXXXXXXXX
+            description: the primary key for each product (it is the source primary key).
             tests:
               - unique
               - not_null
@@ -288,28 +290,28 @@ sources:
             description: XXXXXXXXXX
 
           - name: _fivetran_synced
-            description: XXXXXXXXXX
+            description: shows the timestamp in which a record was loaded to the source table.
             tests:
               - not_null
 
       - name: users
         loaded_at_field: _fivetran_synced
-        description: XXXXXXXXXX
+        description: represents a table with the users/customers information.
 
         columns:
           - name: user_id
-            description: XXXXXXXXXX
+            description: the primary key for each user/customer (it is the source primary key).
             tests:
               - unique
               - not_null
 
           - name: updated_at
-            description: XXXXXXXXXX
+            description: the timestamp this record was updated.
             tests:
               - not_null
 
           - name: address_id
-            description: XXXXXXXXXX
+            description: the address where this user/customer lives.
             tests:
               - not_null
               - relationships:
@@ -317,31 +319,31 @@ sources:
                   field: address_id
 
           - name: last_name
-            description: XXXXXXXXXX
+            description: the last name of a user/customer.
             tests:
               - not_null
 
           - name: created_at
-            description: XXXXXXXXXX
+            description: the timestamp this record was created.
             tests:
               - not_null
 
           - name: phone_number
-            description: XXXXXXXXXX
+            description: the phone number of a user/customer.
             tests:
               - not_null
 
           - name: total_orders
-            description: XXXXXXXXXX
+            description: the total amount of orders/sales a costumer has purchase to the company.
             
 
           - name: first_name
-            description: XXXXXXXXXX
+            description: the first name of a user/customer.
             tests:
               - not_null
 
           - name: email
-            description: XXXXXXXXXX
+            description: the email of a user/customer.
             tests:
               - not_null
 
@@ -349,6 +351,6 @@ sources:
             description: XXXXXXXXXX
 
           - name: _fivetran_synced
-            description: XXXXXXXXXX
+            description: shows the timestamp in which a record was loaded to the source table.
             tests:
               - not_null

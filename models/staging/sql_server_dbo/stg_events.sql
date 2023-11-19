@@ -3,7 +3,7 @@
 with events as(
 
     select * 
-    from {{ source('sql_server_dbo', 'events') }}
+    from {{ source('src_sql_server_dbo', 'events') }}
 ),
 
 renamed_casted as(

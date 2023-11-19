@@ -1,7 +1,7 @@
 with users as (
 
     select *
-    from {{ source('sql_server_dbo', 'users') }}
+    from {{ source('src_sql_server_dbo', 'users') }}
 ),
 
 stg_users as (
@@ -13,8 +13,8 @@ stg_users as (
         last_name::varchar(50) as last_name,
         email::varchar(50) as email,
         phone_number::varchar(50) as phone_number,
-        cast(created_at as date) as created_at,
-        cast(created_at as date) as updated_at, 
+        cast(created_at as date) as created_at_utc,
+        cast(updated_at as date) as updated_at_utc, 
         coalesce(_fivetran_deleted, false)::boolean as row_deleted,
         _fivetran_synced as date_load
     from users
