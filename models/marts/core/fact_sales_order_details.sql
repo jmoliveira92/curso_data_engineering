@@ -34,7 +34,7 @@ fact_sales_order_details as(
         cast(stg_order_items.quantity_sold*dim_products.unit_price_usd as decimal(24,2)) as gross_sales_usd,
 
         -- extended discount amount  = (discount/100) * (quantity*unit price)
-        int_discount.discount * cast(stg_order_items.quantity_sold*dim_products.unit_price_usd as decimal(24,2)) as discount_usd
+        int_discount.discount * cast(stg_order_items.quantity_sold*dim_products.unit_price_usd as decimal(24,2)) as discount_usd,
 
         --net sales usd
         ( cast(stg_order_items.quantity_sold*dim_products.unit_price_usd as decimal(24,2))) -(int_discount.discount * cast(stg_order_items.quantity_sold*dim_products.unit_price_usd as decimal(24,2))) as net_sales_amout

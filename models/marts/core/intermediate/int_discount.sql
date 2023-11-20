@@ -12,6 +12,7 @@ dim_sales_orders as(
 
 int_discount as(
     select
+        {{dbt_utils.generate_surrogate_key(['dim_sales_orders.order_id'])}},
         dim_sales_orders.order_id,
         case when dim_promos.promo_discount is null then 0
              else cast(dim_promos.promo_discount/100 as decimal(24,2)) end as discount
