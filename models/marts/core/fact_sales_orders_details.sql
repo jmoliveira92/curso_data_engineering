@@ -26,8 +26,10 @@ fact_sales_order_details as(
 
     select
         dim_sales_orders.order_sk as order_sk,
+        dim_sales_orders.date_key as date_key,
         stg_order_items.order_id as order_id,
         dim_products.product_sk as product_sk,
+        stg_order_items.product_id as product_id,
         stg_order_items.quantity_sold,
         dim_products.unit_price_usd,
         -- total_sales_usd is the quantity x price

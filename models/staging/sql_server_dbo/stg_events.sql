@@ -1,4 +1,3 @@
--- esta tabla puede ser una fact? creo que si...
 
 with events as(
 
@@ -12,11 +11,19 @@ select
     session_id::varchar(50) as session_id,
     user_id::varchar(50) as user_id,
     event_type::varchar(50) as event_type,
-    product_id::varchar(50) as product_id,
-    order_id::varchar(50) as order_id,
+    
+    (case when product_id = '' then 'no_product'
+         when product_id is null then 'no_product'
+         else product_id end)::varchar(50) as product_id,
+    
+    (case when order_id = '' then 'no_order'
+         when order_id is null then 'no_order'
+         else order_id end)::varchar(50) as order_id,
+    
     cast(created_at as date) as created_at_utc,     
     page_url::varchar(256) as page_url,
     _FIVETRAN_SYNCED as date_load
+
 from events
 order by 7 asc
 )

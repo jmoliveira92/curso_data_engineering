@@ -28,7 +28,9 @@ dim_sales_orders as (
         stg_orders.delivered_at_utc,
         DATEDIFF(day, stg_orders.created_at_utc, stg_orders.delivered_at_utc) AS days_to_deliver,
         DATEDIFF(day, stg_orders.estimated_delivery_at_utc, stg_orders.delivered_at_utc) AS delay_deliver_days,
-    -- measures
+        
+    -- measures: en principio vamos ignorar porque vamos calcular manualmente en la fact_sales_orders_details,
+    -- con excepción de "shipping_cost" que es como un atributo de la order
         shipping_cost_usd,
         stg_orders.date_load
     from stg_orders
