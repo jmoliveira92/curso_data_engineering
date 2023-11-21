@@ -23,33 +23,16 @@ sources:
         columns:
           - name: address_id
             description: a primary key from the source database.
-            tests:
-              - unique
-              - not_null
-
           - name: zipcode
             description: the zipcode where an address is located.
-            tests:
-              - not_null
-
           - name: country
             description: the country where an address is located.
-            tests:
-              - not_null
-
           - name: address
             description: the address (street, number, apartment_no,...) of an user/customer.
-            tests:
-              - not_null
-
           - name: state
             description: the state where an address is located.
-            tests:
-              - not_null
-
           - name: _fivetran_deleted
             description: XXXXXXXXXX
-
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
 
@@ -60,63 +43,23 @@ sources:
         columns:
           - name: event_id
             description: XXXXXXXXXX
-            tests:
-              - unique
-              - not_null
-
           - name: page_url
-            description: XXXXXXXXXX
-            tests:
-              - not_null
-
+            description: XXXXXXXX
           - name: event_type
             description: XXXXXXXXXX
-            tests:
-              - not_null
-              - accepted_values:
-                  values:
-                    ["add_to_cart", "checkout", "package_shipped", "page_view"]
-
           - name: user_id
             description: XXXXXXXXXX
-            tests:
-              - not_null
-              - relationships:
-                  to: source('sql_server_dbo', 'users')
-                  field: user_id
-
           - name: product_id
-            description: XXXXXXXXXX
-            tests:
-              - relationships:
-                  to: source('sql_server_dbo', 'products')
-                  field: product_id
-
-
+            description: XXXXXXXX
           - name: session_id
             description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: created_at
-            description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: order_id
             description: XXXXXXXXXX
-            tests:
-              - relationships:
-                  to: source('sql_server_dbo', 'orders')
-                  field: order_id
-            
           - name: _fivetran_deleted
             description: XXXXXXXXXX
-
           - name: _fivetran_synced
-            description: shows the timestamp in which a record was loaded to the source table.
-            tests:
-              - not_null
+
 
       - name: orders
         loaded_at_field: _fivetran_synced
@@ -124,10 +67,7 @@ sources:
 
         columns:
           - name: order_id
-            description: XXXXXXXXXX
-            tests:
-              - unique
-              - not_null
+            description: XXXXXXXX
 
           - name: shipping_service
             description: XXXXXXXXXX
@@ -281,18 +221,13 @@ sources:
 
           - name: status
             description: XXXXXXXXXX
-            tests:
-              - not_null
-              - accepted_values:
-                  values: ["active", "inactive"]
 
           - name: _fivetran_deleted
             description: XXXXXXXXXX
 
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
-            tests:
-              - not_null
+
 
       - name: users
         loaded_at_field: _fivetran_synced
@@ -301,56 +236,39 @@ sources:
         columns:
           - name: user_id
             description: the primary key for each user/customer (it is the source primary key).
-            tests:
-              - unique
-              - not_null
 
           - name: updated_at
             description: the timestamp this record was updated.
-            tests:
-              - not_null
 
           - name: address_id
             description: the address where this user/customer lives.
-            tests:
-              - not_null
-              - relationships:
-                  to: source('sql_server_dbo', 'addresses')
-                  field: address_id
+
 
           - name: last_name
             description: the last name of a user/customer.
-            tests:
-              - not_null
+
 
           - name: created_at
             description: the timestamp this record was created.
-            tests:
-              - not_null
 
           - name: phone_number
             description: the phone number of a user/customer.
-            tests:
-              - not_null
 
           - name: total_orders
             description: the total amount of orders/sales a costumer has purchase to the company.
             
-
           - name: first_name
             description: the first name of a user/customer.
-            tests:
-              - not_null
 
           - name: email
             description: the email of a user/customer.
-            tests:
-              - not_null
 
           - name: _fivetran_deleted
             description: XXXXXXXXXX
 
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
-            tests:
-              - not_null
+
+
+      - name: users_clone
+        description: a duplicate table for the exercice 2

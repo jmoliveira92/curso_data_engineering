@@ -1,53 +1,53 @@
 
+{{ config(
+    materialized='incremental',
+    unique_key = 'order_id',
+    on_schema_change='fail'
+    ) 
+    }}
+
 with orders as(
 
     select *
     from {{ source('src_sql_server_dbo', 'orders') }}
 
+{% if is_incremental() %}
+
+	  where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
+
+      --{{this}} represents the model that is materialize "at this moment", not the one at the time of the incremental.
+
+{% endif %}
+
 ),
 
 stg_orders as(
-
     select
     -- keys
         order_id::varchar(50) as order_id,
         user_id::varchar(50) as user_id,
         address_id::varchar(50) as address_id,
-        
-        (case when promo_id = '' then 'no_promo'
-             when promo_id is null then 'no_promo'
-             else promo_id end)::varchar(50) as promo_id,
-
-    -- deliver related
-        status::varchar(50) as status,
-
-        (case when tracking_id = '' then 'not_assigned'
-             when tracking_id is null then 'not_assigned'
-             else tracking_id end)::varchar(50) as tracking_id,
-
-        (case when shipping_service = '' then 'not_assigned'
-             when shipping_service is null then 'not_assigned'
-             else shipping_service end)::varchar(50) as shipping_service,
+        decode(promo_id,null,'no_promo','','no_promo',promo_id)::varchar(50) as promo_id,
+       
+    --  delivery/shipping related
+        decode(status,null,'no_status','','no_status',status)::varchar(50) as status,
+        decode(tracking_id,null,'not_assigned','','not_assigned',tracking_id)::varchar(50) as tracking_id,
+        decode(shipping_service,null,'not_assigned','','not_assigned',shipping_service)::varchar(50) as shipping_service,
 
     -- dates
-        cast(created_at as date) as created_at_utc,
-        to_char(created_at, 'YYYY-MM-DD HH24:MM') as created_at_utc_2,
-        
+        created_at::timestamp as created_at_utc,
         estimated_delivery_at::timestamp as estimated_delivery_at_utc,
-        to_char(estimated_delivery_at, 'YYYY-MM-DD HH24:MM') as estimated_delivery_at_utc_2,
-
         delivered_at::timestamp as delivered_at_utc,
-        to_char(delivered_at, 'YYYY-MM-DD HH24:MM') as delivered_at_utc_2,
 
-        
+
     -- measures: en principio vamos ignorar porque vamos calcular manualmente en la fact_sales_orders_details,
-    -- con excepción de "shipping_cost" que es como un atributo de la order
+    -- con excepción de "shipping_cost" que es como un atributo de la dim_orders
         order_cost::decimal(24,2) as order_cost_usd,
         shipping_cost::decimal(24,2) as shipping_cost_usd,
         order_total::decimal(24,2) as order_total_usd,
-        _fivetran_synced::timestamp as date_load
+        _fivetran_synced::timestamp as _fivetran_synced
+        
     from orders
 )
-
 
 select *  from stg_orders
