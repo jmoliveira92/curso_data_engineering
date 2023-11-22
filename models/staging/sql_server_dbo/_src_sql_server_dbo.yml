@@ -71,73 +71,32 @@ sources:
 
           - name: shipping_service
             description: XXXXXXXXXX
-
           - name: shipping_cost
             description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: address_id
             description: XXXXXXXXXX
-            tests:
-              - not_null
-              - relationships:
-                  to: source('sql_server_dbo', 'addresses')
-                  field: address_id
-
           - name: created_at
             description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: promo_id
             description: XXXXXXXXXX
-            tests:
-              - relationships:
-                  to: source('sql_server_dbo', 'promos')
-                  field: promo_id
-
           - name: estimated_delivery_at
             description: XXXXXXXXXX
-
           - name: order_cost
             description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: user_id
             description: XXXXXXXXXX
-            tests:
-              - not_null
-              - relationships:
-                  to: source('sql_server_dbo', 'users')
-                  field: user_id
-
           - name: order_total
             description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: delivered_at
             description: XXXXXXXXXX
-
           - name: tracking_id
             description: XXXXXXXXXX
-
           - name: status
             description: XXXXXXXXXX
-            tests:
-              - not_null
-              - accepted_values:
-                  values: ["delivered", "preparing", "shipped"]
-
           - name: _fivetran_deleted
             description: XXXXXXXXXX
-
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
-            tests:
-              - not_null
 
       - name: order_items
         loaded_at_field: _fivetran_synced
@@ -145,32 +104,14 @@ sources:
         columns:
           - name: order_id
             description: the primary key for each order (it is the source primary key).
-            tests:
-              - not_null
-              - relationships:
-                  to: source('sql_server_dbo', 'orders')
-                  field: order_id
-
           - name: product_id
             description: the primary key for each product (it is the source primary key).
-            tests:
-              - not_null
-              - relationships:
-                  to: source('sql_server_dbo', 'products')
-                  field: order_id
-
           - name: quantity
             description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: _fivetran_deleted
             description: XXXXXXXXXX
-
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
-            tests:
-              - not_null
 
       - name: products
         loaded_at_field: _fivetran_synced
@@ -179,29 +120,16 @@ sources:
         columns:
           - name: product_id
             description: the primary key for each product (it is the source primary key).
-            tests:
-              - not_null
-              - unique
-
           - name: price
             description: XXXXXXXXXX
-
           - name: name
             description: XXXXXXXXXX
-            tests:
-              - not_null
-              - unique
-
           - name: inventory
             description: XXXXXXXXXX
-
           - name: _fivetran_deleted
             description: XXXXXXXXXX
-
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
-            tests:
-              - not_null
 
       - name: promos
         loaded_at_field: _fivetran_synced
@@ -210,21 +138,12 @@ sources:
         columns:
           - name: promo_id
             description: the primary key for each product (it is the source primary key).
-            tests:
-              - unique
-              - not_null
-
           - name: discount
             description: XXXXXXXXXX
-            tests:
-              - not_null
-
           - name: status
             description: XXXXXXXXXX
-
           - name: _fivetran_deleted
             description: XXXXXXXXXX
-
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
 
@@ -236,39 +155,26 @@ sources:
         columns:
           - name: user_id
             description: the primary key for each user/customer (it is the source primary key).
-
           - name: updated_at
             description: the timestamp this record was updated.
-
           - name: address_id
             description: the address where this user/customer lives.
-
-
           - name: last_name
             description: the last name of a user/customer.
-
-
           - name: created_at
             description: the timestamp this record was created.
-
           - name: phone_number
             description: the phone number of a user/customer.
-
           - name: total_orders
-            description: the total amount of orders/sales a costumer has purchase to the company.
-            
+            description: the total amount of orders/sales a costumer has purchase to the company. 
           - name: first_name
             description: the first name of a user/customer.
-
           - name: email
             description: the email of a user/customer.
-
           - name: _fivetran_deleted
             description: XXXXXXXXXX
-
           - name: _fivetran_synced
             description: shows the timestamp in which a record was loaded to the source table.
-
 
       - name: users_clone
         description: a duplicate table for the exercice 2

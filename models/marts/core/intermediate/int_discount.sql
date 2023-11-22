@@ -12,10 +12,10 @@ dim_sales_orders as(
 
 int_discount as(
     select
-        {{dbt_utils.generate_surrogate_key(['dim_sales_orders.order_id'])}},
+        {{dbt_utils.generate_surrogate_key(['dim_sales_orders.order_id'])}} as order_sk,
         dim_sales_orders.order_id,
-        case when dim_promos.promo_discount is null then 0
-             else cast(dim_promos.promo_discount/100 as decimal(24,2)) end as discount
+        case when dim_promos.promo_discount_percent is null then 0
+             else cast(dim_promos.promo_discount_percent/100 as decimal(24,2)) end as discount
     from dim_sales_orders
     left join {{ ref('dim_promos') }} on dim_promos.promo_sk = dim_sales_orders.promo_sk
 
