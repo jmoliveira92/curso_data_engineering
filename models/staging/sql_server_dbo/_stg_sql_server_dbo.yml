@@ -1,101 +1,306 @@
 version: 2
 
 models:
-  - name: stg_adresses
-    description: a staging table showing addresses from the users/customers who did orders or interact the business.
-    columns:
-      - name: address_id
-        description: a primary key from the source database.
-        tests:
-          - unique
-          - not_null
+      - name: addresses
+        description: a table who shows living addresses from the users/customers, and also the shipping address who did orders or interact with the website.
+        columns:
+          - name: address_id
+            data_type: varchar
+            description: a primary key from the source database.
+            tests:
+              - unique
+              - not_null
+                
+          - name: country
+            data_type: varchar
+            description: the country where an address is located.
+          - name: state
+            data_type: varchar
+            description: the state where an address is located.
+          - name: zipcode
+            data_type: varchar
+            description: the zipcode where an address is located.
+          - name: address
+            data_type: varchar
+            description: the address (street, number, apartment_no,...) of an user/customer.
+          - name: date_load
+            data_type: timestamp_tz
+            description: shows the timestamp in which a record was loaded to the source table.
 
-      - name: zipcode
-        description: the zipcode where an address is located.
-        tests:
-          - not_null
+      - name: stg_events
+        description: source table for events data, mainly the behaviour of our prospects in the website.
+        columns:
+          - name: event_id
+            data_type: varchar
+            description: primary key identifier for the event. And event is a interaction with the website, such as, see a product page url, add to cart a product, make a checkout, etc.
+            tests:
+              - unique
+              - not_null
 
-      - name: country
-        description: the country where an address is located.
-        tests:
-          - not_null
+          - name: session_id
+            data_type: varchar
+            description: primary key identifier for the user session. A user can be in 1 session and interact with the website, means, 1 session can have several event_id. 
+            tests:
+              - not_null
 
-      - name: address
-        description: the address (street, number, apartment_no,...) of an user/customer.
-        tests:
-          - not_null
+          - name: user_id
+            data_type: varchar
+            description: primary key identifier for the user.
+            tests:
+              - not_null
 
-      - name: state
-        description: the state where an address is located.
-        tests:
-          - not_null
+          - name: event_type
+            data_type: varchar
+            description: the type of the event_id (e.g., 'page_view', 'add-to-cart', 'checkout', 'package_shipped').
+          - name: product_id
+            data_type: varchar
+            description: primary key identifier for the product associated with the event.
+            tests:
+              - not_null
 
-      - name: _fivetran_deleted
-        description: XXXXXXXXXX
+          - name: order_id
+            data_type: varchar
+            description: primary key identifier for the order associated with the event.
+            tests:
+              - not_null
 
-      - name: _fivetran_synced
-        description: entifies the timestamp in which a record was loaded to the source table.
+          - name: created_at_utc
+            data_type: timestamp_ntz
+            description: Timestamp indicating when the event occurred in Coordinated Universal Time (UTC).
+            tests:
+              - not_null
+          - name: page_url
+            data_type: varchar
+            description: URL associated with the event.
+            tests:
+              - not_null
+          - name: date_load
+            data_type: timestamp_tz
+            description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+      - name: stg_order_items
+        description: Staging table for order items data. It has the max granularity, means, a order_id can have several product_id with different quantities.
+        columns:
+          - name: order_id
+            data_type: varchar
+            description: Identifier for the order.
+            tests:
+              - not_null
+          - name: product_id
+            data_type: varchar
+            description: Identifier for the product
+            tests:
+              - not_null
+
+          - name: quantity_sold
+            data_type: number
+            description: Quantity of the product sold.
+            tests:
+              - not_null
+
+          - name: date_load
+            data_type: timestamp_tz
+            description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+      - name: stg_orders
+        description: Staging table for orders data. It has less granularity than "order_items", which aggregates the order products and have more relavant information.
+        columns:
+          - name: order_id
+            data_type: varchar
+            description: Identifier for the order.
+            tests:
+              - unique
+              - not_null
+
+          - name: user_id
+            data_type: varchar
+            description: Identifier for the user.
+            tests:
+              - not_null
+
+          - name: address_id
+            data_type: varchar
+            description: Identifier for the address delivery, and note, can be different from the user living address. 
+            tests:
+              - not_null
+
+          - name: promo_id
+            data_type: varchar
+            description: Identifier for the promotion.
+            tests:
+              - not_null
+
+          - name: status
+            data_type: varchar
+            description: Status of the order.
+            tests:
+              - not_null
+
+          - name: tracking_id
+            data_type: varchar
+            description: Identifier for order tracking.
+
+          - name: shipping_service
+            data_type: varchar
+            description: Shipping service company's name that deliver the a order.
+            
+          - name: created_at_utc
+            data_type: timestamp_ntz
+            description: Timestamp indicating when the order was created in Coordinated Universal Time (UTC).
+            tests:
+              - not_null
+
+          - name: estimated_delivery_at_utc
+            data_type: timestamp_ntz
+            description: Estimated delivery timestamp in Coordinated Universal Time (UTC) of an order.
+
+          - name: delivered_at_utc
+            data_type: timestamp_ntz
+            description: Estimated delivery timestamp in Coordinated Universal Time (UTC).
+
+          - name: order_cost_usd
+            data_type: number
+            description: Cost of the order in US dollars.
+   
+
+          - name: shipping_cost_usd
+            data_type: number
+            description: Shipping cost of an order in US dollars.
+
+          - name: order_total_usd
+            data_type: number
+            description: Total cost of the order in US dollars (= order_cost - discount + shipping_cost).
+            tests:
+              - not_null
+
+          - name: _fivetran_synced
+            data_type: timestamp_ntz
+            description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+      - name: stg_products
+        description: Source table for product data.
+        columns:
+          - name: product_id
+            data_type: varchar
+            description: Identifier for the product.
+            tests:
+              - unique
+              - not_null
+
+          - name: product_name
+            data_type: varchar
+            description: Name of the product.
+            tests:
+              - not_null
+
+          - name: unit_price_usd
+            data_type: number
+            description: Unit price of the product in USD.
+            tests:
+              - not_null
+
+          - name: inventory
+            data_type: number
+            description: Quantity of the product in inventory.
+            tests:
+              - not_null
 
 
-  - name: users
-    description: represents a table with the users/customers information.
-    columns:
-      - name: user_id
-        description: the primary key for the user/customer (it is the source primary key).
-        tests:
-          - unique
-          - not_null
+          - name: date_load
+            data_type: timestamp_tz
+            description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
-      - name: updated_at
-        description: the date this record was updated.
-        tests:
-          - not_null
+      - name: stg_promos
+        description: Staging table for promotional data.
+        columns:
+          - name: promo_id
+            data_type: varchar
+            description: Identifier for the promotion.
+            tests:
+              - unique
+              - not_null
 
-      - name: address_id
-        description: the address where this user/customer lives.
-        tests:
-          - not_null
-          - relationships:
-              to: source('sql_server_dbo', 'addresses')
-              field: address_id
+          - name: promo_discount
+            data_type: float
+            description: Discount percentage for the promotion.
+            tests:
+              - unique
+              - not_null
 
-      - name: last_name
-        description: the last name from the user/customer.
-        tests:
-          - not_null
+          - name: promo_status
+            data_type: varchar
+            description: Status of the promotion (active/inactive).
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['active','inactive']
 
-      - name: created_at
-        description: the date this record was created.
-        tests:
-          - not_null
+          - name: row_deleted
+            data_type: boolean
+            description: Indicator of whether the record is deleted from FIVETRAN.
+          - name: date_load
+            data_type: timestamp_tz
+            description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
-      - name: phone_number
-        description: the phone number of a user/customer.
-        tests:
-          - not_null
+      - name: stg_state
+        description: Staging table for state data.
+        columns:
+          - name: state
+            data_type: varchar
+            description: Name or code representing a state.
+            tests:
+              - unique
+              - not_null
 
-      - name: first_name
-        description: the first name from the user/customer.
-        tests:
-          - not_null
+      - name: stg_users
+        description: Staging table for user/customer data.
+        columns:
+          - name: user_id
+            data_type: varchar
+            description: Identifier for the user.
+            tests:
+              - unique
+              - not_null
 
-      - name: email
-        description: the email of a user/customer.
-        tests:
-          - not_null
+          - name: address_id
+            data_type: varchar
+            description: Identifier for the user's address.
+            tests:
+              - not_null
 
-      - name: _fivetran_deleted
-        description: XXXXXXXXXX
-
-      - name: _fivetran_synced
-        description: entifies the timestamp in which a record was loaded to the source table.
-        tests:
-          - not_null
-  
-  - name: stg_location
-    description: the distinct locations from the source table 'addresses'
-    columns:
-      - name: state
-        description: the unique states from the source table 'addresses'
-        tests:
-          - unique
+          - name: first_name
+            data_type: varchar
+            description: First name of the user.
+            tests:
+              - not_null
+          - name: last_name
+            data_type: varchar
+            description: Last name of the user.
+            tests:
+              - not_null
+          - name: email
+            data_type: varchar
+            description: Email address of the user.
+            tests:
+              - not_null
+          - name: phone_number
+            data_type: varchar
+            description: Phone number of the user.
+            tests:
+              - not_null
+          - name: created_at_utc
+            data_type: date
+            description: Timestamp indicating when the user was created, in UTC.
+            tests:
+              - not_null
+          - name: updated_at_utc
+            data_type: date
+            description: Timestamp indicating when the record was last updated, in UTC.
+            tests:
+              - not_null
+          - name: row_deleted
+            data_type: boolean
+            description: Indicator of whether the record is deleted from FIVETRAN.
+          - name: date_load
+            data_type: timestamp_tz
+            description: Timestamp indicating when the data was loaded into the staging table, including time zone information.

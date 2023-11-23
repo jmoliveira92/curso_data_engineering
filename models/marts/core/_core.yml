@@ -94,13 +94,14 @@ models:
         data_type: varchar
         description: user surrogate key from the table stg_users.
         tests:
-          - relationships:
-              to: ref('stg_users')
-              field: user_sk
+          - unique
+          - not_null
+
 
       - name: user_id
         data_type: varchar
         description: user_id from the table stg_users.
+
 
       - name: address_sk
         data_type: varchar

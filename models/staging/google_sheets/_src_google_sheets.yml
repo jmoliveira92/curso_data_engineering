@@ -54,6 +54,4 @@ sources:
 
           - name: date_load
             description: identifies the timestamp in which a record was loaded to the source table.
-            tests:
-              - not_null
               

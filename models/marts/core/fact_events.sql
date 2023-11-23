@@ -6,13 +6,14 @@ with stg_events as(
         event_type,
         product_id,
         order_id,
-        created_at_utc,
+        created_at_utc as created_at_utc,
         created_at_utc::date as created_at_utc_date,
+        created_at_utc::time as created_at_utc_time,
         page_url
     from {{ ref('stg_events') }}
 ),
-dim_events as (
-    select * from {{ ref('dim_events') }}
+dim_customers as (
+    select * from {{ ref('dim_customers') }}
 ),
 dim_event_types as(
     select * from {{ ref('dim_event_types') }}
@@ -30,14 +31,14 @@ dim_date as(
 fact_events as(
     select
         a.event_id,
-        b.session_sk,
+        a.session_id,
+        g.user_sk,
         c.event_types_sk,
-        a.event_type,
+        a.event_type, --optional, just here for readability
         d.product_sk,
         e.order_sk,
-        e.date_key,
-        a.created_at_utc,
-        a.created_at_utc_date,
+        f.date_key,
+        a.created_at_utc_time,
         a.page_url
 
     from stg_events a 
@@ -46,7 +47,8 @@ fact_events as(
     left join dim_products d on d.product_id = a.product_id
     left join dim_sales_orders e on e.order_id = a.order_id
     left join dim_date f on f.date_day = a.created_at_utc_date
+    left join dim_customers g on g.user_id = a.user_id
 
-    order by session_sk, created_at_utc
+    order by 2,9
 )
 select * from fact_events

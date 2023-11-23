@@ -46,7 +46,7 @@ dim_sales_orders as (
         d.address_sk,
         e.promo_sk,
     -- deliver related
-        f.status_sk,
+        a.status,
         a.tracking_id,
         g.shipping_service_sk,
     -- dates
@@ -60,7 +60,6 @@ dim_sales_orders as (
     left join {{ ref('dim_customers') }} c on c.user_id = a.user_id
     left join {{ ref('dim_addresses') }} d on d.address_id = a.address_id
     left join {{ ref('dim_promos') }} e on e.promo_id = a.promo_id
-    left join {{ ref('dim_status') }} f on f.status = a.status
     left join {{ ref('dim_shipping_service') }} g on g.shipping_service = a.shipping_service
 
     order by 9 desc
