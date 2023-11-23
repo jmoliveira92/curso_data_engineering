@@ -1,0 +1,18 @@
+-- check: https://docs.getdbt.com/docs/build/custom-schemas
+-- check video (9:15): https://www.youtube.com/watch?v=cK617PcokS0&list=PLaz3Ms051BAkrmgiaFcIknpHTK6PVy1dJ&index=2&t=686s
+
+{% macro generate_schema_name(custom_schema_name, node) -%}
+
+    {%- set default_schema = target.schema -%}
+
+    {%- if env_var('DBT_ENVIRONMENTS') in ['CI_CD'] or custom_schema_name is not none -%}
+
+        {{ custom_schema_name | trim }}
+
+    {%- else -%}
+
+        {{ default_schema }}
+
+    {%- endif -%}
+
+{%- endmacro %}

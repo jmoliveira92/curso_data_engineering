@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: stg_adresses
+    description: a staging table showing addresses from the users/customers who did orders or interact the business.
+    columns:
+      - name: address_id
+        description: a primary key from the source database.
+        tests:
+          - unique
+          - not_null
+
+      - name: zipcode
+        description: the zipcode where an address is located.
+        tests:
+          - not_null
+
+      - name: country
+        description: the country where an address is located.
+        tests:
+          - not_null
+
+      - name: address
+        description: the address (street, number, apartment_no,...) of an user/customer.
+        tests:
+          - not_null
+
+      - name: state
+        description: the state where an address is located.
+        tests:
+          - not_null
+
+      - name: _fivetran_deleted
+        description: XXXXXXXXXX
+
+      - name: _fivetran_synced
+        description: entifies the timestamp in which a record was loaded to the source table.
+
+
+  - name: users
+    description: represents a table with the users/customers information.
+    columns:
+      - name: user_id
+        description: the primary key for the user/customer (it is the source primary key).
+        tests:
+          - unique
+          - not_null
+
+      - name: updated_at
+        description: the date this record was updated.
+        tests:
+          - not_null
+
+      - name: address_id
+        description: the address where this user/customer lives.
+        tests:
+          - not_null
+          - relationships:
+              to: source('sql_server_dbo', 'addresses')
+              field: address_id
+
+      - name: last_name
+        description: the last name from the user/customer.
+        tests:
+          - not_null
+
+      - name: created_at
+        description: the date this record was created.
+        tests:
+          - not_null
+
+      - name: phone_number
+        description: the phone number of a user/customer.
+        tests:
+          - not_null
+
+      - name: first_name
+        description: the first name from the user/customer.
+        tests:
+          - not_null
+
+      - name: email
+        description: the email of a user/customer.
+        tests:
+          - not_null
+
+      - name: _fivetran_deleted
+        description: XXXXXXXXXX
+
+      - name: _fivetran_synced
+        description: entifies the timestamp in which a record was loaded to the source table.
+        tests:
+          - not_null
+  
+  - name: stg_location
+    description: the distinct locations from the source table 'addresses'
+    columns:
+      - name: state
+        description: the unique states from the source table 'addresses'
+        tests:
+          - unique
