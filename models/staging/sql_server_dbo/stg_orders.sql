@@ -39,9 +39,7 @@ stg_orders as(
         estimated_delivery_at::timestamp as estimated_delivery_at_utc,
         delivered_at::timestamp as delivered_at_utc,
 
-
-    -- measures: en principio vamos ignorar porque vamos calcular manualmente en la fact_sales_orders_details,
-    -- con excepción de "shipping_cost" que es como un atributo de la dim_orders
+    -- measures:
         order_cost::decimal(24,2) as order_cost_usd,
         shipping_cost::decimal(24,2) as shipping_cost_usd,
         order_total::decimal(24,2) as order_total_usd,
