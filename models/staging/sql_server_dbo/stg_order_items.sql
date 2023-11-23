@@ -14,7 +14,7 @@ with order_items as(
 
 {% if is_incremental() %}
 
-	  where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
+	  where _fivetran_synced > (select max(date_load) from {{ this }}) 
 
       --{{this}} represents the model that is materialize "at this moment", not the one at the time of the incremental.
 

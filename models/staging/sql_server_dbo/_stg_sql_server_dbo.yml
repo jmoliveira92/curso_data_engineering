@@ -85,7 +85,6 @@ models:
             data_type: varchar
             description: Identifier for the order.
             tests:
-              - unique
               - not_null
           - name: product_id
             data_type: varchar
@@ -129,7 +128,6 @@ models:
             data_type: varchar
             description: Identifier for the promotion.
             tests:
-              - unique
               - not_null
 
           - name: status
@@ -233,7 +231,6 @@ models:
             data_type: varchar
             description: Status of the promotion (active/inactive).
             tests:
-              - unique
               - not_null
               - accepted_values:
                   values: ['active','inactive']
