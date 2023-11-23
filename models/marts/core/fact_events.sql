@@ -6,8 +6,8 @@ with stg_events as(
         event_type,
         product_id,
         order_id,
+        created_at_utc,
         created_at_utc::date as created_at_utc_date,
-        created_at_utc::time as created_at_utc_time,
         page_url
     from {{ ref('stg_events') }}
 ),
@@ -32,11 +32,12 @@ fact_events as(
         a.event_id,
         b.session_sk,
         c.event_types_sk,
+        a.event_type,
         d.product_sk,
         e.order_sk,
         e.date_key,
+        a.created_at_utc,
         a.created_at_utc_date,
-        a.created_at_utc_time,
         a.page_url
 
     from stg_events a 
@@ -45,5 +46,7 @@ fact_events as(
     left join dim_products d on d.product_id = a.product_id
     left join dim_sales_orders e on e.order_id = a.order_id
     left join dim_date f on f.date_day = a.created_at_utc_date
+
+    order by session_sk, created_at_utc
 )
 select * from fact_events
