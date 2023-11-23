@@ -1,40 +1,49 @@
-with dim_customers as (
-    select * from {{ ref('dim_customers') }}
+with stg_events as(
+    select 
+        event_id,
+        session_id,
+        user_id,
+        event_type,
+        product_id,
+        order_id,
+        created_at_utc::date as created_at_utc_date,
+        created_at_utc::time as created_at_utc_time,
+        page_url
+    from {{ ref('stg_events') }}
 ),
-
+dim_events as (
+    select * from {{ ref('dim_events') }}
+),
+dim_event_types as(
+    select * from {{ ref('dim_event_types') }}
+),
 dim_products as(
     select * from {{ ref('dim_products') }}
 ),
-
 dim_sales_orders as(
     select * from {{ ref('dim_sales_orders') }}
 ),
-
-stg_events as(
-    select * from {{ ref('stg_events') }}
+dim_date as(
+    select * from {{ ref('dim_date') }}
 ),
 
-dim_events as(
+fact_events as(
     select
-        {{dbt_utils.generate_surrogate_key(['stg_events.event_id'])}} as event_sk,
-        {{dbt_utils.generate_surrogate_key(['stg_events.session_id'])}} as session_sk,
-        --stg_events.created_at_utc,
-        dim_date.date_key,
-        dim_customers.user_sk,
-        --stg_events.event_type,
-        dim_event_types.event_types_sk,
-        dim_products.product_sk,
-        dim_sales_orders.order_sk,
+        a.event_id,
+        b.session_sk,
+        c.event_types_sk,
+        d.product_sk,
+        e.order_sk,
+        e.date_key,
+        a.created_at_utc_date,
+        a.created_at_utc_time,
+        a.page_url
 
-        stg_events.page_url,
-        stg_events.date_load
-        
-    from stg_events
-    left join {{ ref('dim_sales_orders') }} on dim_sales_orders.order_id = stg_events.order_id
-    left join {{ ref('dim_customers') }}    on dim_customers.user_id = stg_events.user_id
-    left join {{ ref('dim_products') }}     on dim_products.product_id = stg_events.product_id
-    left join {{ ref('dim_event_types') }}  on dim_event_types.event_type = stg_events.event_type
-    left join {{ ref('dim_date') }}         on dim_date.date_day = stg_events.created_at_utc
+    from stg_events a 
+    left join dim_events b on b.session_id = a.session_id
+    left join dim_event_types c on c.event_type= a.event_type
+    left join dim_products d on d.product_id = a.product_id
+    left join dim_sales_orders e on e.order_id = a.order_id
+    left join dim_date f on f.date_day = a.created_at_utc_date
 )
-
-select * from dim_events
+select * from fact_events

@@ -3,6 +3,9 @@ with stg_addresses as(
 
     select * from {{ ref('stg_addresses') }}
 ),
+no_address_row as(
+    select * from (values ('no_address','no_address','no_address','no_address','no_address','no_address'))
+),
 
 dim_addresses as(
   
@@ -17,3 +20,5 @@ dim_addresses as(
 )
 
 select * from dim_addresses
+union all
+select * from no_address_row

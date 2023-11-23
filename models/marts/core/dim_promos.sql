@@ -11,6 +11,7 @@ dim_promos as(
         {{dbt_utils.generate_surrogate_key(['promo_id'])}} as promo_sk,
         promo_orders as promo_id,
         decode(promo_discount,null,0,promo_discount) as promo_discount_percent,
+        decode(promo_discount,null,0,promo_discount/100) as discount_unit,
         decode(promo_status,'','inactive',null,'inactive',promo_status) as promo_status
 
     from distinct_promo_orders
