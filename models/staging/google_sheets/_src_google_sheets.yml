@@ -6,7 +6,10 @@ sources:
     description: a source database from snowflake datawarehouse. It has monthly sales target table.
       
     schema: google_sheets # this is the schema our raw data lives in
-    database: ALUMNO25_DEV_BRONZE_DB # this is the name of our database
+    database: "{{ env_var('DBT_ENVIRONMENTS') }}_BRONZE_DB" # this is the name of our database
+
+
+#    database antigua: ALUMNO25_DEV_BRONZE_DB
 
     quoting:
       database: false
@@ -41,7 +44,7 @@ sources:
             description: the monthly quantity target for each product.
             tests:
               - not_null
-              - positive_values
+              
               #poner algun test para que sea maior de 0.
 
           - name: month

@@ -25,6 +25,6 @@ dim_date as(
 )
 select * from dim_date_1900
 
-union 
+union all
 
 select * from dim_date
