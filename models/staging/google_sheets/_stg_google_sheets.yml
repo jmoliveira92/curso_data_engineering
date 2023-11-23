@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: stg_budget
+    description: ""
+    columns:
+      - name: budget_sk
+        data_type: varchar
+        description: ""
+
+      - name: product_id
+        data_type: varchar
+        description: ""
+
+      - name: target_quantity
+        data_type: number
+        description: ""
+
+      - name: date_day
+        data_type: date
+        description: ""
+
+      - name: date_load
+        data_type: timestamp_tz
+        description: ""

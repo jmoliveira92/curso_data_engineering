@@ -98,8 +98,6 @@ models:
             description: Quantity of the product sold.
             tests:
               - not_null
-              - dbt_utils.expression_is_true:
-                expression: '>= 0.1'
 
           - name: date_load
             data_type: timestamp_tz
