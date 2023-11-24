@@ -1,7 +1,7 @@
 version: 2
 
 models:
-      - name: addresses
+      - name: stg_addresses
         description: a table who shows living addresses from the users/customers, and also the shipping address for orders.
         columns:
           - name: address_id

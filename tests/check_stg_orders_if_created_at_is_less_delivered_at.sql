@@ -1,5 +1,5 @@
 SELECT *
-FROM {{ ref('fct_orders') }}
+FROM {{ ref('fact_sales_orders') }}
 WHERE delivered_at_utc < created_at_utc
 
 
