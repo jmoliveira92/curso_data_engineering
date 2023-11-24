@@ -48,6 +48,9 @@ models:
             description: primary key identifier for the user.
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_users')
+                  field: user_id
 
           - name: event_type
             data_type: varchar
@@ -86,11 +89,18 @@ models:
             description: Identifier for the order.
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_orders')
+                  field: order_id
+
           - name: product_id
             data_type: varchar
             description: Identifier for the product
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_products')
+                  field: product_id
 
           - name: quantity_sold
             data_type: number
@@ -117,12 +127,18 @@ models:
             description: Identifier for the user.
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_users')
+                  field: user_id
 
           - name: address_id
             data_type: varchar
             description: Identifier for the address delivery, and note, can be different from the user living address. 
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_addresses')
+                  field: address_id
 
           - name: promo_id
             data_type: varchar
@@ -269,6 +285,9 @@ models:
             description: Identifier for the user's address.
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_addresses')
+                  field: address_id
 
           - name: first_name
             data_type: varchar
