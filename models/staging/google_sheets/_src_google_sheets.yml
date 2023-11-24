@@ -39,14 +39,16 @@ sources:
               - relationships:
                   to: source('sql_server_dbo', 'products')
                   field: product_id
+              - not_null
+              
 
           - name: quantity
             description: the monthly quantity target for each product.
             tests:
               - not_null
+              - positive_values
               
-              #poner algun test para que sea maior de 0.
-
+            
           - name: month
             description: identifies the month in each target must be accomplished.
             tests:
