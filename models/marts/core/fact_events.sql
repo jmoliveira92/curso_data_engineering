@@ -32,7 +32,7 @@ fact_events as(
     select
         a.event_id,
         a.session_id,
-        g.user_sk,
+        b.user_sk,
         c.event_types_sk,
         a.event_type, --optional, just here for readability
         d.product_sk,
@@ -42,13 +42,12 @@ fact_events as(
         a.page_url
 
     from stg_events a 
-    left join dim_events b on b.session_id = a.session_id
+    left join dim_customers b on b.user_id = a.user_id
     left join dim_event_types c on c.event_type= a.event_type
     left join dim_products d on d.product_id = a.product_id
     left join dim_sales_orders e on e.order_id = a.order_id
     left join dim_date f on f.date_day = a.created_at_utc_date
-    left join dim_customers g on g.user_id = a.user_id
-
+    
     order by 2,9
 )
 select * from fact_events

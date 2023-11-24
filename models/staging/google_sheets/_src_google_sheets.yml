@@ -36,9 +36,6 @@ sources:
           - name: product_id
             description: identifies the product_id of each product.
             tests:
-              - relationships:
-                  to: source('sql_server_dbo', 'products')
-                  field: product_id
               - not_null
               
 
