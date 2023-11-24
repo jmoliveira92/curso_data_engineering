@@ -2,7 +2,7 @@ version: 2
 
 models:
       - name: addresses
-        description: a table who shows living addresses from the users/customers, and also the shipping address who did orders or interact with the website.
+        description: a table who shows living addresses from the users/customers, and also the shipping address for orders.
         columns:
           - name: address_id
             data_type: varchar
@@ -22,7 +22,7 @@ models:
             description: the zipcode where an address is located.
           - name: address
             data_type: varchar
-            description: the address (street, number, apartment_no,...) of an user/customer.
+            description: the address (street, number, apartment_no,...).
           - name: date_load
             data_type: timestamp_tz
             description: shows the timestamp in which a record was loaded to the source table.
@@ -134,7 +134,9 @@ models:
             data_type: varchar
             description: Status of the order.
             tests:
-              - not_null
+            - not_null
+            - accepted_values:
+                values: ['no_status','preparing','shipped','delivered']
 
           - name: tracking_id
             data_type: varchar

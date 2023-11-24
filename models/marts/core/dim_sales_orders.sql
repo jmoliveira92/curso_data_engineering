@@ -1,16 +1,15 @@
-with stg_orders_snapshot as (
+with stg_orders as (
     select * 
-    from {{ ref('stg_orders_snapshot') }}
-    where dbt_valid_to is null
+    from {{ ref('stg_orders') }}
 ),
 
 no_orders_row as(
-    select * from (values ('no_order','no_order','19000101','no_user','no_address','no_promo','no_status','not_assigned','not_assigned',current_timestamp(),null,null))
+    select * from (values ('no_order','no_order','19000101','no_user','no_address','no_promo','no_status','not_assigned','cef0bae907c5e57dd8acf211076b003a',current_timestamp(),null,null))
 
 ),
 
---this cte serves to select the relevant columns from the snapshot to construct our dimension
-stg_orders_snapshot_2 as(
+--this cte serves to select the relevant columns from the table 'stg_orders' to construct our dimension
+stg_orders_2 as(
 
     select
     -- keys
@@ -29,12 +28,9 @@ stg_orders_snapshot_2 as(
         estimated_delivery_at_utc::timestamp as estimated_delivery_at_utc,
         delivered_at_utc::timestamp as delivered_at_utc
     
-    from stg_orders_snapshot
+    from stg_orders
 
 ),
-
---select * from stg_orders_snapshot_2
-
 
 dim_sales_orders as (
     select
@@ -54,7 +50,7 @@ dim_sales_orders as (
         a.estimated_delivery_at_utc as estimated_delivery_at_utc,
         a.delivered_at_utc as delivered_at_utc      
 
-    from stg_orders_snapshot_2 a
+    from stg_orders_2 a
 
     left join {{ ref('dim_date') }} b on b.date_day = a.created_at_utc::date
     left join {{ ref('dim_customers') }} c on c.user_id = a.user_id
