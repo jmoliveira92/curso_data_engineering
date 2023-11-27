@@ -550,6 +550,16 @@ models:
   - name: fact_sales_orders_details
     description: fact table who consists of the measurements and metrics of the purchase (order) made by a customer.
     columns:
+          
+      - name: user_sk
+        data_type: varchar
+        description: a foreigh key to connect this table with the table "dim_customers".
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: user_sk
+
       - name: order_sk
         data_type: varchar
         description: a foreigh key to connect this table with the table "dim_sales_orders".
@@ -624,3 +634,17 @@ models:
       - name: deliver_precision_days
         data_type: number
         description: when a order is shipped to the customer, an estimated date for deliver is created. This metric compares the precison of the estimated deliver date with the actual date of the order deliver.
+
+      - name: created_at_utc
+        data_type: timestamp_ltz
+        description: Timestamp indicating when the order was created in Coordinated Universal Time (UTC).
+        tests:
+          - not_null
+
+      - name: estimated_delivery_at_utc
+        data_type: timestamp_ntz
+        description: Estimated delivery timestamp in Coordinated Universal Time (UTC) of an order.
+
+      - name: delivered_at_utc
+        data_type: timestamp_ntz
+        description: Estimated delivery timestamp in Coordinated Universal Time (UTC).
