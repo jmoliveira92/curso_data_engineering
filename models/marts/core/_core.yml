@@ -537,9 +537,9 @@ models:
               to: ref('dim_date')
               field: date_key
 
-      - name: created_at_utc_time
-        data_type: time
-        description: time indicating when the event was created (hour,minute,second).
+      - name: created_at_utc
+        data_type: timestamp
+        description: timestamp indicating when the event was created (hour,minute,second).
 
       - name: page_url
         data_type: varchar
@@ -577,14 +577,14 @@ models:
 
       - name: unit_price_usd
         data_type: number
-        description: ""
+        description: unit price of a product.  
         tests:
           - not_null
           - positive_values
 
       - name: discount_usd
         data_type: float
-        description: ""
+        description: discount amount in usd.
         tests:
           - not_null
           - positive_values

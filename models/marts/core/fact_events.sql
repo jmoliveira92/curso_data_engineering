@@ -8,7 +8,6 @@ with stg_events as(
         order_id,
         created_at_utc as created_at_utc,
         created_at_utc::date as created_at_utc_date,
-        created_at_utc::time as created_at_utc_time,
         page_url
     from {{ ref('stg_events') }}
 ),
@@ -38,7 +37,7 @@ fact_events as(
         d.product_sk,
         e.order_sk,
         f.date_key,
-        a.created_at_utc_time,
+        a.created_at_utc,
         a.page_url
 
     from stg_events a 
