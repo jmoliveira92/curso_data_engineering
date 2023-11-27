@@ -38,10 +38,11 @@ count_order_items as(
     order by 1
 ),
 
-fact_sales_order_details as(
+fact_sales_orders_details as(
 
     select
     --keys
+        b.user_sk,
         b.order_sk,
         d.product_sk,
     
@@ -61,7 +62,10 @@ fact_sales_order_details as(
 
     -- measures (delivery/shipping related)
         {{ dbt.datediff("b.created_at_utc", "b.delivered_at_utc", "day") }} as days_to_deliver,
-        {{ dbt.datediff("b.created_at_utc", "b.delivered_at_utc", "day") }} as deliver_precision_days
+        {{ dbt.datediff("b.created_at_utc", "b.delivered_at_utc", "day") }} as deliver_precision_days,
+        b.created_at_utc,
+        b.estimated_delivery_at_utc,
+        b.delivered_at_utc
 
     from stg_order_items a
 
@@ -70,6 +74,7 @@ fact_sales_order_details as(
     left join dim_products d on d.product_id = a.product_id
     left join count_order_items e on e.order_id = a.order_id
     left join stg_orders f on f.order_id = a.order_id
+     
 )
 
-select * from fact_sales_order_details
+select * from fact_sales_orders_details
