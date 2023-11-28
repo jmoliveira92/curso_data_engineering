@@ -161,7 +161,7 @@ models:
     columns:
       - name: address_sk
         data_type: varchar
-        description: a surrogate key generated to our table through "address_id".
+        description: a surrogate key generated to the table through "address_id".
         tests:
           - unique
           - not_null
@@ -212,7 +212,7 @@ models:
 
       - name: address_sk
         data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_dates".
+        description: a foreigh key to connect this table with the table "dim_addresses".
         tests:
           - relationships:
               to: ref('dim_addresses')
@@ -550,7 +550,16 @@ models:
   - name: fact_sales_orders_details
     description: fact table who consists of the measurements and metrics of the purchase (order) made by a customer.
     columns:
-          
+
+      - name: date_key
+        data_type: varchar
+        description: a foreigh key to connect this table with the table "dim_date".
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+
       - name: user_sk
         data_type: varchar
         description: a foreigh key to connect this table with the table "dim_customers".
@@ -559,6 +568,14 @@ models:
           - relationships:
               to: ref('dim_customers')
               field: user_sk
+
+      - name: address_sk
+        data_type: varchar
+        description: a foreigh key to connect this table with the table "dim_addresses".
+        tests:
+          - relationships:
+              to: ref('dim_addresses')
+              field: address_sk
 
       - name: order_sk
         data_type: varchar
@@ -592,13 +609,6 @@ models:
           - not_null
           - positive_values
 
-      - name: discount_usd
-        data_type: float
-        description: discount amount in usd.
-        tests:
-          - not_null
-          - positive_values
-
       - name: gross_sales_usd
         data_type: number
         description: gross value of a sale (equal to quantity_sold * unit_price_usd)
@@ -606,9 +616,16 @@ models:
           - not_null
           - positive_values
 
+      - name: discount_decimal
+        data_type: float
+        description: discount percentage divided by 100.
+        tests:
+          - not_null
+          - positive_values
+
       - name: discount_amount_usd
         data_type: number
-        description: extended discount amount of a line order. Equal to (discount_usd/100) * (quantity_sold*unit_price_usd)
+        description: extended discount amount of a line order. Equal to (discount_decimal * quantity_sold*unit_price_usd)
         tests:
           - not_null
           - positive_values
@@ -641,10 +658,3 @@ models:
         tests:
           - not_null
 
-      - name: estimated_delivery_at_utc
-        data_type: timestamp_ntz
-        description: Estimated delivery timestamp in Coordinated Universal Time (UTC) of an order.
-
-      - name: delivered_at_utc
-        data_type: timestamp_ntz
-        description: Estimated delivery timestamp in Coordinated Universal Time (UTC).
