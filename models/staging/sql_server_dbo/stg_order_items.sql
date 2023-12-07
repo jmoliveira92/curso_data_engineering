@@ -16,18 +16,16 @@ with order_items as(
 
 	  where _fivetran_synced > (select max(date_load) from {{ this }}) 
 
-      --{{this}} represents the model that is materialize "at this moment", not the one at the time of the incremental.
+      --{{this}} represents the model that was materialized before run the incremental query/feature.
 
 {% endif %}
-
-
 ),
 
 renamed_casted as(
 select
     order_id::varchar(50) as order_id,
     product_id::varchar(50) as product_id,
-    quantity::int as quantity_sold,
+    quantity::int as quantity_sold,                -- potencial field for a measure
     _FIVETRAN_SYNCED as date_load
 from order_items
 )

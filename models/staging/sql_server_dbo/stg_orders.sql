@@ -15,7 +15,7 @@ with orders as(
 
 	  where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
 
-      --{{this}} represents the model that is materialize "at this moment", not the one at the time of the incremental.
+       --{{this}} represents the model that was materialized before run the incremental query/feature.
 
 {% endif %}
 
@@ -39,7 +39,7 @@ stg_orders as(
         estimated_delivery_at::timestamp as estimated_delivery_at_utc,
         delivered_at::timestamp as delivered_at_utc,
 
-    -- measures:
+    -- potential measures:
         order_cost::decimal(24,2) as order_cost_usd,
         shipping_cost::decimal(24,2) as shipping_cost_usd,
         order_total::decimal(24,2) as order_total_usd,

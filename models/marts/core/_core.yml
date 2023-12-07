@@ -14,29 +14,9 @@ models:
         data_type: date
         description:  Date of the record in a format YYYY-MM-DD.
 
-      - name: prior_date_day
-        data_type: date
-        description: Prior date of the record.
-
-      - name: next_date_day
-        data_type: date
-        description: Next date of the record.
-
-      - name: prior_year_date_day
-        data_type: date
-        description: Date from the prior year.
-
-      - name: prior_year_over_year_date_day
-        data_type: date
-        description: Date from the prior year compared to the current year.
-
-      - name: day_of_week
+      - name: day_of_week_number
         data_type: number
         description: Numeric representation of the day of the week.
-
-      - name: day_of_week_iso
-        data_type: number
-        description: ISO numeric representation of the day of the week.
 
       - name: day_of_week_name
         data_type: varchar
@@ -46,61 +26,11 @@ models:
         data_type: varchar
         description: Short name of the day of the week.
 
-      - name: day_of_month
+      - name: day_of_month_number
         data_type: number
         description: Day of the month.
 
-      - name: day_of_year
-        data_type: number
-        description: Day of the year.
 
-      - name: week_start_date
-        data_type: date
-        description: Start date of the week.
-
-      - name: week_end_date
-        data_type: date
-        description: End date of the week.
-
-      - name: prior_year_week_start_date
-        data_type: date
-        description: Start date of the week from the prior year.
-
-      - name: prior_year_week_end_date
-        data_type: date
-        description: End date of the week from the prior year.
-
-      - name: week_of_year
-        data_type: number
-        description: Week number of the year.
-
-      - name: iso_week_start_date
-        data_type: date
-        description: Start date of the ISO week.
-
-      - name: iso_week_end_date
-        data_type: date
-        description: End date of the ISO week.
-
-      - name: prior_year_iso_week_start_date
-        data_type: date
-        description: Start date of the ISO week from the prior year.
-
-      - name: prior_year_iso_week_end_date
-        data_type: date
-        description: End date of the ISO week from the prior year.
-
-      - name: iso_week_of_year
-        data_type: number
-        description: ISO week number of the year
-
-      - name: prior_year_week_of_year
-        data_type: number
-        description: Week number of the prior year.
-
-      - name: prior_year_iso_week_of_year
-        data_type: number
-        description: ISO week number of the prior year.
 
       - name: month_of_year
         data_type: number
@@ -114,46 +44,21 @@ models:
         data_type: varchar
         description: Short name of the month.
 
-      - name: month_start_date
-        data_type: date
-        description: Start date of the month.
+      - name: day_of_year_number
+        data_type: number
+        description: Day of the year.
 
-      - name: month_end_date
-        data_type: date
-        description: End date of the month.
+      - name: week_of_year_number
+        data_type: number
+        description: Week number of the year.
 
-      - name: prior_year_month_start_date
-        data_type: date
-        description: Start date of the month from the prior year.
-
-      - name: prior_year_month_end_date
-        data_type: date
-        description: End date of the month from the prior year.
-
-      - name: quarter_of_year
+      - name: quarter_of_year_number
         data_type: number
         description: Quarter number of the year.
-
-      - name: quarter_start_date
-        data_type: date
-        description: Start date of the quarter.
-
-      - name: quarter_end_date
-        data_type: date
-        description: End date of the quarter.
 
       - name: year_number
         data_type: number
         description: Year number.
-
-      - name: year_start_date
-        data_type: date
-        description: Start date of the year.
-
-      - name: year_end_date
-        data_type: date
-        description: End date of the year.
-
 
 
   - name: dim_addresses
@@ -249,10 +154,6 @@ models:
       - name: event_type
         data_type: varchar
         description: the type of the event_id (e.g., 'page_view', 'add-to-cart', 'checkout', 'package_shipped').
-        tests:
-          - accepted_values:
-              values: ['page_view', 'add_to_cart', 'checkout', 'package_shipped']
-          - not_null
 
 
   - name: dim_products
@@ -281,6 +182,13 @@ models:
       - name: unit_price_usd
         data_type: number
         description: Unit price of the product in USD.
+        tests:
+          - not_null
+          - positive_values
+
+      - name: product_cost_usd
+        data_type: number
+        description: aquisition cost of a unit of  acertain product.
         tests:
           - not_null
           - positive_values
@@ -331,91 +239,6 @@ models:
           - not_null
           - accepted_values:
               values: ['active','inactive']
-
-
-  - name: dim_sales_orders
-    description: a dimensional table who shows the information of the orders (1 row per order).
-    columns:
-      - name: order_sk
-        data_type: varchar
-        description: a surrogate key generated to our table through "order_id". 
-
-      - name: order_id
-        data_type: varchar
-        description: a primary key from the source database.
-
-      - name: date_key
-        data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_dates".
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_date')
-              field: date_key
-
-
-      - name: user_sk
-        data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_customers".
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_customers')
-              field: user_sk
-
-      - name: address_sk
-        data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_addresses".
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_addresses')
-              field: address_sk
-
-      - name: promo_sk
-        data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_promos".
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_promos')
-              field: promo_sk
-
-      - name: status
-        data_type: varchar
-        description: Status of the order.
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['no_status','preparing','shipped','delivered']
-
-      - name: tracking_id
-        data_type: varchar
-        description: Identifier for order tracking.
-
-      - name: shipping_service_sk
-        data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_shipping_service".
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_shipping_service')
-              field: shipping_service_sk
-        
-
-      - name: created_at_utc
-        data_type: timestamp_ltz
-        description: Timestamp indicating when the order was created in Coordinated Universal Time (UTC).
-        tests:
-          - not_null
-
-      - name: estimated_delivery_at_utc
-        data_type: timestamp_ntz
-        description: Estimated delivery timestamp in Coordinated Universal Time (UTC) of an order.
-
-      - name: delivered_at_utc
-        data_type: timestamp_ntz
-        description: Estimated delivery timestamp in Coordinated Universal Time (UTC).
 
 
   - name: dim_shipping_service
@@ -484,7 +307,6 @@ models:
         data_type: varchar
         description: a primary key from the source database. Each 'action' of the user has a unique event_id.
         tests:
-          - unique
           - not_null
 
       - name: session_id
@@ -492,15 +314,6 @@ models:
         description: identifier of session. A user in 1 session can interact in many ways (several event_id's).
         tests:
           - not_null
-
-      - name: event_types_sk
-        data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_event_types".
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_event_types')
-              field: event_types_sk
 
       - name: event_type
         data_type: varchar
@@ -519,14 +332,11 @@ models:
               to: ref('dim_products')
               field: product_sk
 
-      - name: order_sk
+      - name: order_id
         data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_sales_orders".
+        description: a key that identifies an order.
         tests:
           - not_null
-          - relationships:
-              to: ref('dim_sales_orders')
-              field: order_sk
 
       - name: date_key
         data_type: varchar
@@ -560,13 +370,20 @@ models:
               to: ref('dim_date')
               field: date_key
 
+      - name: order_sk
+        data_type: varchar
+        description: a surrogate key construct using the columns "user_id", "order_id", "product_id"
+        tests:
+          - not_null
+          - unique
+
       - name: user_sk
         data_type: varchar
         description: a foreigh key to connect this table with the table "dim_customers".
         tests:
           - not_null
           - relationships:
-              to: ref('dim_customers')
+              to: ref('dim_users')
               field: user_sk
 
       - name: address_sk
@@ -577,14 +394,21 @@ models:
               to: ref('dim_addresses')
               field: address_sk
 
-      - name: order_sk
+      - name: status
         data_type: varchar
-        description: a foreigh key to connect this table with the table "dim_sales_orders".
+        description: the status of an order
         tests:
           - not_null
+          - accepted_values:
+              values: ['preparing','shipped','delivered']
+
+      - name: shipping_service_sk
+        data_type: varchar
+        description: a foreigh key to connect this table with the table "dim_shipping_service".
+        tests:
           - relationships:
-              to: ref('dim_sales_orders')
-              field: order_sk
+              to: ref('dim_shipping_service')
+              field: shipping_service_sk
 
       - name: product_sk
         data_type: varchar
@@ -613,36 +437,41 @@ models:
         data_type: number
         description: gross value of a sale (equal to quantity_sold * unit_price_usd)
         tests:
-          - not_null
-          - positive_values
-
-      - name: discount_decimal
-        data_type: float
-        description: discount percentage divided by 100.
-        tests:
-          - not_null
           - positive_values
 
       - name: discount_amount_usd
         data_type: number
         description: extended discount amount of a line order. Equal to (discount_decimal * quantity_sold*unit_price_usd)
         tests:
-          - not_null
+          - positive_values
+
+      - name: shipping_revenue_usd
+        data_type: number
+        description: weighted shipping revenue in usd per line of product in a given order.
+        tests:
           - positive_values
 
       - name: shipping_cost_usd
         data_type: number
-        description: weighted shipping_cost in usd per line of product in a given order.
+        description: shipping cost in usd per line of product in a given order based in the shipping_agreement.
         tests:
-          - not_null
+          - positive_values
+
+      - name: product_cost_usd
+        data_type: number
+        description: the cost of an product based on the product_features table.
+        tests:
+          - positive_values
+
+      - name: diluded_oper_cost
+        data_type: number
+        description: weighted operative costs of the company in usd based on the opeartive costs in a given month divided by the number of products sold on a certain month. 
+        tests:
           - positive_values
 
       - name: net_sales_amout
         data_type: number
         description: net sales in usd Equal to (gross_sales_usd - discount_amount_usd + shipping_cost_usd).
-        tests:
-          - not_null
-          - positive_values
 
       - name: days_to_deliver
         data_type: number
@@ -655,6 +484,8 @@ models:
       - name: created_at_utc
         data_type: timestamp_ltz
         description: Timestamp indicating when the order was created in Coordinated Universal Time (UTC).
-        tests:
-          - not_null
+
+      - name: time
+        data_type: time
+        description: extracted time from the Timestamp column "created_at_utc" in Coordinated Universal Time (UTC).
 

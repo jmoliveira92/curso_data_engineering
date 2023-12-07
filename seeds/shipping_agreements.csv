@@ -1,0 +1,5 @@
+SHIPPING_SERVICE,SHIPPING_AGREEMENT
+dhl,0.85
+fedex,0.75
+ups,0.6
+usps,0.6

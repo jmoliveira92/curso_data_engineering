@@ -11,17 +11,14 @@ with stg_events as(
         page_url
     from {{ ref('stg_events') }}
 ),
-dim_customers as (
-    select * from {{ ref('dim_customers') }}
-),
-dim_event_types as(
-    select * from {{ ref('dim_event_types') }}
+dim_users as (
+    select * from {{ ref('dim_users') }}
 ),
 dim_products as(
     select * from {{ ref('dim_products') }}
 ),
-dim_sales_orders as(
-    select * from {{ ref('dim_sales_orders') }}
+int_orders as(
+    select * from {{ ref('int_orders') }}
 ),
 dim_date as(
     select * from {{ ref('dim_date') }}
@@ -32,21 +29,22 @@ fact_events as(
         a.event_id,
         a.session_id,
         b.user_sk,
-        c.event_types_sk,
-        a.event_type, --optional, just here for readability
+        a.event_type,
         d.product_sk,
-        e.order_sk,
+        e.order_id,
         f.date_key,
         a.created_at_utc,
+        a.created_at_utc::time as time,
         a.page_url
 
     from stg_events a 
-    left join dim_customers b on b.user_id = a.user_id
-    left join dim_event_types c on c.event_type= a.event_type
+    left join dim_users b on b.user_id = a.user_id
     left join dim_products d on d.product_id = a.product_id
-    left join dim_sales_orders e on e.order_id = a.order_id
+    left join int_orders e on e.order_id = a.order_id
     left join dim_date f on f.date_day = a.created_at_utc_date
     
     order by 2,9
 )
 select * from fact_events
+
+

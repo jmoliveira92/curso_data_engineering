@@ -1,3 +1,9 @@
+{{
+  config(
+    materialized='view'
+  )
+}}
+
 with stg_orders as (
     select * 
     from {{ ref('stg_orders') }}
@@ -53,7 +59,7 @@ dim_sales_orders as (
     from stg_orders_2 a
 
     left join {{ ref('dim_date') }} b on b.date_day = a.created_at_utc::date
-    left join {{ ref('dim_customers') }} c on c.user_id = a.user_id
+    left join {{ ref('dim_users') }} c on c.user_id = a.user_id
     left join {{ ref('dim_addresses') }} d on d.address_id = a.address_id
     left join {{ ref('dim_promos') }} e on e.promo_id = a.promo_id
     left join {{ ref('dim_shipping_service') }} g on g.shipping_service = a.shipping_service

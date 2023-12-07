@@ -1,23 +1,21 @@
 with stg_products as(
     select * from {{ ref('stg_products') }}
 ),
-no_product_row as(
-select * from (values ('no_product','no_product','no_product',0,0))
+stg_product_features as(
+    select * from {{ ref('stg_product_features') }}
 ),
 
 dim_products as (
 
     select
-        {{dbt_utils.generate_surrogate_key(['product_id'])}} as product_sk,
-        product_id,
-        product_name,
-        unit_price_usd,
-        inventory
-    from stg_products
-    order by 3
-
+        {{dbt_utils.generate_surrogate_key(['a.product_id','a.product_name','a.unit_price_usd'])}} as product_sk,
+        a.product_id,
+        a.product_name,
+        a.unit_price_usd,
+        decode(product_cost_usd,null,0,round(product_cost_usd,2)) as product_cost_usd,
+        a.inventory
+    from stg_products a
+    left join stg_product_features b on b.product_id=a.product_id
 )
 
 select * from dim_products
-union all
-select * from no_product_row

@@ -12,14 +12,14 @@ Para ello nos solicitan que indiquemos:
 - Total de productos diferentes que ha comprado.
 
 */
-with dim_customers as (
-    select * from {{ ref('dim_customers') }}
+with dim_users as (
+    select * from {{ ref('dim_users') }}
 ),
 dim_addresses as (
     select * from {{ ref('dim_addresses') }}
 ),
-dim_sales_orders as (
-    select * from {{ ref('dim_sales_orders') }}
+int_orders as (
+    select * from {{ ref('int_orders') }}
 ),
 fact_sales_orders_details as (
     select * from {{ ref('fact_sales_orders_details') }}
@@ -58,10 +58,10 @@ exercicio as (
         decode(c.total_quantity_products,null,0,c.total_quantity_products) as total_quantity_products,
         decode(c.total_different_products,null,0,c.total_different_products) as total_different_products
 
-    from dim_customers a
+    from dim_users a
     left join dim_addresses b on b.address_sk = a.address_sk
     full join agg_fact c on c.user_sk = a.user_sk
-    --left join dim_sales_orders y on y.user_sk = a.user_sk
+    --left join int_orders y on y.user_sk = a.user_sk
     order by 12 desc
 ),
 
@@ -268,7 +268,7 @@ select * from accuracy_est_deliver
 
 -- 9. Customer Segmentation:
 
-    -- Segment customers based on their purchasing behavior.
+    -- Segment users based on their purchasing behavior.
 
     -- Analyze whether certain customer segments tend to receive higher discounts or have longer delivery times.
 

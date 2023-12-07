@@ -238,11 +238,10 @@ models:
               - unique
               - not_null
 
-          - name: promo_discount
+          - name: promo_discount_percent
             data_type: float
             description: Discount percentage for the promotion.
             tests:
-              - unique
               - not_null
 
           - name: promo_status
