@@ -4,7 +4,7 @@ with addresses as(
     from {{ source('src_sql_server_dbo', 'addresses') }}
 ),
 no_address_row as(
-     select * from (values('no_address','unknown','unknown','unknown','unknown',current_timestamp()))
+     select * from (values('no_address','unknown','unknown','unknown','unknown','1900-01-01'))
 ),
 
 stg_addresses as(

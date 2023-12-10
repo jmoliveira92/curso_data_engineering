@@ -12,16 +12,10 @@ with order_items as(
 
     select * 
     from {{ ref('src_order_items_snap') }}
-    where dbt_valid_to is null
-    --{{ source('src_sql_server_dbo', 'order_items') }}
-
-{% if is_incremental() %}
-
-	  where _fivetran_synced > (select max(date_load) from {{ this }}) 
-
-      --{{this}} represents the model that ts materialized at this moment, before run the incremental query/feature.
-
-{% endif %}
+    
+    {% if is_incremental() %}
+        where _fivetran_synced > (select max(date_load) from {{ this }}) 
+    {% endif %}
 ),
 
 renamed_casted as(
@@ -32,6 +26,7 @@ select
     quantity::int as quantity_sold,                -- potencial field for a measure
     _fivetran_synced as date_load
 from order_items
+where dbt_valid_to is null
 )
 
 select *  from renamed_casted

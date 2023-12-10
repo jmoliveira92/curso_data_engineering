@@ -10,7 +10,7 @@ from dim_users
 
 select 
     round(avg(days_to_deliver),2) as avg_days_delivery
-from fact_sales_orders_details
+from fact_orders
 --RESPOSTA: 3.83 days
 
 3. ¿Cuántos usuarios han realizado una sola compra? ¿Dos compras? ¿Tres o más compras?
@@ -26,8 +26,8 @@ with dim_users as (
     select * from {{ ref('dim_users') }}
 ),
 
-fact_sales_orders_details as(
-    select * from {{ ref('fact_sales_orders_details') }}
+fact_orders as(
+    select * from {{ ref('fact_orders') }}
 ),
 
 int_orders as (
@@ -47,7 +47,7 @@ resp_1 as(
 resp_2 as(
     select 
     round(avg(days_to_deliver),2) as avg_days_delivery
-from fact_sales_orders_details
+from fact_orders
 ),
 
 resp_3 as(

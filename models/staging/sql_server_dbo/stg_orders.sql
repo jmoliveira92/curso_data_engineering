@@ -10,15 +10,10 @@
 with orders as(
 
     select * from {{ ref('src_orders_snap') }}
-    where dbt_valid_to is null
-    --{{ source('src_sql_server_dbo', 'orders') }}
-
-{% if is_incremental() %}
-
-	  where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
-
-       --{{this}} represents the model that is now materialized, before run this incremental 'feature'.
-{% endif %}
+    
+    {% if is_incremental() %}
+        where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
+    {% endif %}
 ),
 
 stg_orders as(
@@ -47,6 +42,7 @@ stg_orders as(
         _fivetran_synced::timestamp as _fivetran_synced
         
     from orders
+    where dbt_valid_to is null
 )
 
 select *  from stg_orders

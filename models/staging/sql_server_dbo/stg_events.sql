@@ -1,8 +1,21 @@
 
+{{ config(
+    materialized='incremental',
+    unique_key = 'event_id',
+    on_schema_change='fail',
+    tags = ["incremental_events"],
+    ) 
+    }}
+
+
 with stg_events as(
 
     select * 
     from {{ source('src_sql_server_dbo', 'events') }}
+
+    {% if is_incremental() %}
+        where _fivetran_synced > (select max(date_load) from {{ this }}) 
+    {% endif %}
 ),
 
 renamed_casted as(
@@ -18,7 +31,10 @@ select
     _FIVETRAN_SYNCED as date_load
 
 from stg_events
-order by 2 asc
+
+where dbt_valid_to is null
+
+order by 7 asc
 )
 
 select *  from renamed_casted

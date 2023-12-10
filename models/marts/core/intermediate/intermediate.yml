@@ -1,0 +1,89 @@
+
+models:
+  - name: int_orders
+    description: ""
+    columns:
+
+      - name: order_id
+        data_type: varchar
+        description: the order id. It is not unique and it is not null.
+
+      - name: user_id
+        data_type: varchar
+        description: It is not unique and it is not null.
+
+      - name: address_id
+        data_type: varchar
+        description: the address id were the order is going. It is not unique and it is not null.
+
+      - name: product_id
+        data_type: varchar
+        description: the product id. It is not unique and it is not null.
+
+      - name: promo_id
+        data_type: varchar
+        description: the promotion id.
+
+      - name: quantity_sold
+        data_type: number
+        description: the quantity of a product id sold inside a order id (so, an order id can have several rows with products id
+
+      - name: unit_price_usd
+        data_type: number
+        description: the price of the product.
+
+      - name: gross_line_sales_usd
+        data_type: number
+        description: the total sale (quantity_sold * unit_price_usd)
+
+      - name: discount_line_amount_usd
+        data_type: number
+        description: the discount apllied to that product.
+
+      - name: product_line_cost_usd
+        data_type: number
+        description: the cost to obtain the product to the supplier-
+
+      - name: shipping_line_revenue_usd
+        data_type: number
+        description: the revenue charge to the client.
+
+      - name: shipping_line_cost_usd
+        data_type: number
+        description: the cost that the shipping_service charge to the company.
+
+      - name: diluded_operative_cost_usd
+        data_type: number
+        description: the diluded operational cost of a certain month (depending when the order was made) divided by the total number of products sold in a that month, and multiplied by the quantity_sold products from the row context. 
+
+      - name: status
+        data_type: varchar
+        description: the status of an order.
+
+      - name: shipping_service
+        data_type: varchar
+        description: name of the shipping service.
+
+      - name: tracking_id
+        data_type: varchar
+        description: the tracking_id of an order.
+
+      - name: weight_line_lbs
+        data_type: number
+        description: the weight of the quantity_sold multiply by the product weight.
+
+      - name: created_at_utc
+        data_type: timestamp_ntz
+        description: the creation of the record in utc.
+
+      - name: estimated_delivery_at_utc
+        data_type: timestamp_ntz
+        description: the date of estimated delivery.
+
+      - name: delivered_at_utc
+        data_type: timestamp_ntz
+        description: the date of the effective delivery.
+
+      - name: created_at_date
+        data_type: date
+        description: the same column of created_at_utc but in a date format.

@@ -9,3 +9,10 @@ with stg_shipping_agreements as(
     where dbt_valid_to is null
 )
 select * from stg_shipping_agreements
+union all
+select * from ( values (
+            'not_assigned',
+            '0',
+            '1900-01-01',
+            '2140-01-01')
+        )

@@ -16,8 +16,9 @@ with int_count_orders_quantity as(
 
     select
         order_id,
-        case when sum(quantity_sold) <=0 then 1 else sum(quantity_sold) end as total_quantity_sold
-    from {{ ref('int_orders') }}
+        case when sum(quantity_sold) <=0 then 1 
+        else sum(quantity_sold) end as total_quantity_sold
+    from {{ ref('stg_order_items') }}
     group by 1
     order by 1
 )

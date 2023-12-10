@@ -23,8 +23,7 @@ dim_users as (
         
     from stg_users a
     left join dim_date b on b.date_day=a.created_at_utc
-    left join dim_addresses c on c.address_id = a.address_id 
-    
+    left join dim_addresses c on c.address_id = a.address_id
     )
 
 select * from dim_users
