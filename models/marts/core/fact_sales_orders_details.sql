@@ -35,7 +35,7 @@ fact_sales_orders_details as(
     select
     --keys
         b.date_key,
-        {{dbt_utils.generate_surrogate_key(['a.user_id', 'a.order_id' ,'a.product_id'])}} as order_sk,
+        {{dbt_utils.generate_surrogate_key(['a.order_id' ,'a.product_id'])}} as order_sk,
         c.user_sk,  
         d.address_sk,
         a.status,

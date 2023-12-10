@@ -6,5 +6,6 @@ structural,variable,Inter IKEA Systems B.V.,office,furniture,2021-02-28,500
 structural,fixed,Best Buy Co. Inc.,office,hardware,2021-02-01,2000
 structural,fixed,Landlord,rent,rent of the small office,2021-02-01,2500
 operative,variable,Meta Platforms Inc.,marketing,advertising campaings,2021-02-20,18500
-operative,variable,Stripe LLC,payments,fee for online payments,2021-02-28,1500
+operative,variable,Stripe LLC,payments,fee for online payments,2021-02-28,1370.27
 operative,variable,Pineapple Express LLC,outsourcing,dropshipping fees,2021-02-28,5000
+operative,variable,Airbnb,travel,business meeting,2021-03-15,3000

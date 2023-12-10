@@ -2,23 +2,23 @@
 {{ config(
     materialized='incremental',
     unique_key = 'order_id',
-    on_schema_change='fail'
+    on_schema_change='fail',
+    tags = ["incremental_orders"],
     ) 
     }}
 
 with orders as(
 
-    select *
-    from {{ source('src_sql_server_dbo', 'orders') }}
+    select * from {{ ref('src_orders_snap') }}
+    where dbt_valid_to is null
+    --{{ source('src_sql_server_dbo', 'orders') }}
 
 {% if is_incremental() %}
 
 	  where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
 
-       --{{this}} represents the model that was materialized before run the incremental query/feature.
-
+       --{{this}} represents the model that is now materialized, before run this incremental 'feature'.
 {% endif %}
-
 ),
 
 stg_orders as(
@@ -43,6 +43,7 @@ stg_orders as(
         order_cost::decimal(24,2) as order_cost_usd,
         shipping_cost::decimal(24,2) as shipping_cost_usd,
         order_total::decimal(24,2) as order_total_usd,
+        
         _fivetran_synced::timestamp as _fivetran_synced
         
     from orders

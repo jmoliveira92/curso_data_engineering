@@ -36,7 +36,7 @@ sources:
           - name: address
             data_type: varchar
             description: the address (street, number, apartment_no,...) of an user/customer.
-          - name: date_load
+          - name: _fivetran_synced
             data_type: timestamp_tz
             description: shows the timestamp in which a record was loaded to the source table.
 
@@ -61,13 +61,13 @@ sources:
           - name: order_id
             data_type: varchar
             description: primary key identifier for the order associated with the event.
-          - name: created_at_utc
+          - name: created_at
             data_type: timestamp_ntz
             description: Timestamp indicating when the event occurred in Coordinated Universal Time (UTC).
           - name: page_url
             data_type: varchar
             description: URL associated with the event.
-          - name: date_load
+          - name: _fivetran_synced
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
@@ -80,10 +80,10 @@ sources:
           - name: product_id
             data_type: varchar
             description: Identifier for the product
-          - name: quantity_sold
+          - name: quantity
             data_type: number
             description: Quantity of the product sold.
-          - name: date_load
+          - name: _fivetran_synced
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
@@ -111,22 +111,22 @@ sources:
           - name: shipping_service
             data_type: varchar
             description: Shipping service company's name that deliver the a order.
-          - name: created_at_utc
+          - name: created_at
             data_type: timestamp_ntz
             description: Timestamp indicating when the order was created in Coordinated Universal Time (UTC).
-          - name: estimated_delivery_at_utc
+          - name: estimated_delivery
             data_type: timestamp_ntz
             description: Estimated delivery timestamp in Coordinated Universal Time (UTC) of an order.
-          - name: delivered_at_utc
+          - name: delivered_at
             data_type: timestamp_ntz
             description: Estimated delivery timestamp in Coordinated Universal Time (UTC).
-          - name: order_cost_usd
+          - name: order_cost
             data_type: number
             description: Cost of the order in US dollars.
-          - name: shipping_cost_usd
+          - name: shipping_cost
             data_type: number
             description: Shipping cost of an order in US dollars.
-          - name: order_total_usd
+          - name: order_total
             data_type: number
             description: Total cost of the order in US dollars (= order_cost - discount + shipping_cost).
           - name: _fivetran_synced
@@ -139,16 +139,19 @@ sources:
           - name: product_id
             data_type: varchar
             description: Identifier for the product.
-          - name: product_name
+          - name: price
+            data_type: number
+            description: Unit price of the product in USD.            
+          - name: name
             data_type: varchar
             description: Name of the product.
-          - name: unit_price_usd
-            data_type: number
-            description: Unit price of the product in USD.
           - name: inventory
             data_type: number
             description: Quantity of the product in inventory.
-          - name: date_load
+          - name: _fivetran_deleted
+            data_type: boolean
+            description: fivetran field
+          - name: _FIVETRAN_SYNCED
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
@@ -158,16 +161,16 @@ sources:
           - name: promo_id
             data_type: varchar
             description: Identifier for the promotion.
-          - name: promo_discount
+          - name: discount
             data_type: float
             description: Discount percentage for the promotion.
-          - name: promo_status
+          - name: status
             data_type: varchar
             description: Status of the promotion (active/inactive).
-          - name: row_deleted
+          - name: _fivetran_deleted
             data_type: boolean
             description: Indicator of whether the record is deleted from FIVETRAN.
-          - name: date_load
+          - name: _fivetran_synced
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
@@ -192,15 +195,15 @@ sources:
           - name: phone_number
             data_type: varchar
             description: Phone number of the user.
-          - name: created_at_utc
+          - name: created_at
             data_type: date
             description: Timestamp indicating when the user was created, in UTC.
-          - name: updated_at_utc
+          - name: updated_at
             data_type: date
             description: Timestamp indicating when the record was last updated, in UTC.
-          - name: row_deleted
+          - name: _fivetran_deleted
             data_type: boolean
             description: Indicator of whether the record is deleted from FIVETRAN.
-          - name: date_load
+          - name: _fivetran_synced
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.

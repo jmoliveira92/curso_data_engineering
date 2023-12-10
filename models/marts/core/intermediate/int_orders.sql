@@ -35,7 +35,10 @@ sub_int_orders as (
 ),
 
 -- the next 3 queries allows ut to have a monthly table with "quantity_sold" and "operative_costs" per month, 
--- the Goal? Later join the operative costs to the intermediate model and have a value per line of order_product.
+-- the Goal? to join the operative costs per month to the intermediate model and have a value per line of order_product.
+-- this way we ensure opearative cost/per product "is monthly dynamic", meaning, 
+-- relates a sale and the operative costs for a certain month.
+
 
 int_summary_orders as(
     select
@@ -49,7 +52,7 @@ oper_accounting as(
     select 
         date_trunc('month', invoice_date) as month,
         sum(total) as total_operative_usd
-    from {{ ref('accounting') }} 
+    from {{ ref('stg_accounting') }}
     where scope = 'operative'
     group by 1
 ),
@@ -60,7 +63,7 @@ int_operative_costs as(
         a.total_operative_usd,
         b.monthly_quantity_sold
     from oper_accounting a
-    left join int_summary_orders b on b.month=a.month
+    join int_summary_orders b on b.month=a.month
 ),
 
 int_orders as(
