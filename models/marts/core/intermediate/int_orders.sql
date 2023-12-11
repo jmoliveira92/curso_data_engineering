@@ -179,17 +179,22 @@ from (
             'no_address',
             'no_product',
             'no_promo',
-            '0',              -- quantity_sold
-            '0',              -- price_usd
-            '0',              -- gross_sales_usd
-            '0',              -- total_product_cost_per_line
-            '0',              -- total_shipping_cost
-            '0',              -- diluded_operative_cost_per_line
+             0,              -- quantity_sold
+             0,              -- price_usd
+             0,              -- gross_sales_usd
+             0,              -- discount_line_amount_usd,
+             0,              -- product_line_cost_usd
+             0,              -- shipping_line_revenue_usd
+             0,              -- shipping_line_cost_usd
+             0,              -- diluded_operative_cost_per_line
             'no_status',      -- status
             'not_assigned',   -- shipping_service
+             null,            -- tracking_id
+             0,               -- weight_line_lbs
             '1900-01-01',     --created_at_utc
             null,             --estimated_deliver
-            null              -- deliver_at
+            null,              -- deliver_at
+            '1900-01-01'              
         )
 )
 {% endif %}

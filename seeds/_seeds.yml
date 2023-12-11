@@ -2,123 +2,123 @@ version: 2
 
 models:
   - name: accounting
-    description: ""
+    description: Table containing accounting information of the company.
     columns:
       - name: scope
         data_type: varchar
-        description: ""
+        description: Refers to the type of cost in the company.
 
       - name: type
         data_type: varchar
-        description: ""
+        description: the type of cost.
 
       - name: vendor
         data_type: varchar
-        description: ""
+        description: The vendor associated with the entry.
 
       - name: category
         data_type: varchar
-        description: ""
+        description: The category of cost of the accounting entry.
 
       - name: description
         data_type: varchar
-        description: ""
+        description: A description of the entry.
 
       - name: invoice_date
         data_type: date
-        description: ""
+        description: The date of the invoice.
 
       - name: total
         data_type: float
-        description: ""
+        description: The total amount associated with the invoice.
 
 
 
 
   - name: personas
-    description: ""
+    description: Table containing information about people who work in the company.
     columns:
       - name: first_name
         data_type: varchar
-        description: ""
+        description: The first name of the person.
 
       - name: last_name
         data_type: varchar
-        description: ""
+        description: The last name of the person.
 
       - name: department
         data_type: varchar
-        description: ""
+        description: The department to which the person belongs/work.
 
       - name: income_year
         data_type: number
-        description: ""
+        description: The income of the person per year.
 
 
   - name: price_history
-    description: ""
+    description: Table containing historical price information for products.
     columns:
       - name: product_id
         data_type: varchar
-        description: ""
+        description: The identifier of the product.
 
       - name: price
         data_type: float
-        description: ""
+        description: The price of the product at a certain point in time.
 
       - name: name
         data_type: varchar
-        description: ""
+        description: The name of the product.
 
       - name: begin_eff_date
         data_type: timestamp_ntz
-        description: ""
+        description: The beginning effective date of the price.
 
       - name: end_eff_date
         data_type: timestamp_ntz
-        description: ""
+        description: The ending effective date of the price.
 
 
   - name: product_features
-    description: ""
+    description: Table containing features information for products.
     columns:
       - name: product_id
         data_type: varchar
-        description: ""
+        description: The identifier of the product.
 
       - name: product_cost
         data_type: float
-        description: ""
+        description: The cost of the product at a certain point in time.
 
       - name: product_weight
         data_type: float
-        description: ""
+        description: The weight of the product.
 
       - name: begin_eff_date
         data_type: timestamp_ntz
-        description: ""
+        description: The beginning effective date of the product cost.
 
       - name: end_eff_date
         data_type: timestamp_ntz
-        description: ""
+        description: The ending effective date of the product cost.
 
 
 
   - name: shipping_agreements
-    description: ""
+    description: Table containing shipping agreements information related with delivers.
     columns:
       - name: shipping_service
         data_type: varchar
-        description: ""
+        description: The name of the shipping service provider.
 
       - name: price_usd_per_lbs
         data_type: float
-        description: ""
+        description: The agreed price per pound for shipping.
 
       - name: begin_eff_date
         data_type: timestamp_ntz
-        description: ""
+        description: The beginning effective date where the shipping agreement start.
 
       - name: end_eff_date
         data_type: timestamp_ntz
-        description: ""
+        description: The ending effective date where the shipping agreement start.
