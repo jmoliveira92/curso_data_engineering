@@ -1,7 +1,22 @@
+{{ config(
+    materialized='incremental',
+    unique_key = ['order_sk'],
+    on_schema_change='fail',
+    tags = ["incremental_orders"],
+)
+    }}
+
+
 
 with int_orders as(    
     select * from {{ ref('int_orders') }}
+
+    {% if is_incremental() %}
+	  where date_load > (select max(created_at_utc) from {{ this }}) 
+    {% endif %}
+
 ),
+
 
 dim_date as (
     select* from {{ ref('dim_date') }}
@@ -78,5 +93,3 @@ fact_orders as(
 )
 
 select * from fact_orders order by 16
-
---select sum(diluded_oper_cost) from fact_orders

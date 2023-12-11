@@ -179,25 +179,24 @@ models:
         tests:
           - not_null
 
-      - name: unit_price_usd
+      - name: msrp_price_usd
         data_type: number
         description: Unit price of the product in USD.
         tests:
           - not_null
           - positive_values
 
-      - name: product_cost_usd
+      - name: product_weight_lbs
         data_type: number
         description: aquisition cost of a unit of  acertain product.
         tests:
           - not_null
           - positive_values
 
-      - name: inventory
-        data_type: number
-        description: Quantity of the product in inventory.
-        tests:
-          - not_null
+      - name: updated_at
+        data_type: timestamp_ltz
+        description: Timestamp indicating when the record was last updated, in UTC.
+
 
 
 
@@ -268,9 +267,8 @@ models:
         description: the name of the state.
 
 
-
   - name: fact_budget
-    description: ""
+    description: the target sales quantities of products.
     columns:
       - name: budget_sk
         data_type: varchar
@@ -351,13 +349,11 @@ models:
         data_type: timestamp
         description: timestamp indicating when the event was created (hour,minute,second).
 
-      - name: page_url
-        data_type: varchar
-        description: the page url visit by the user.
 
 
 
-  - name: fact_sales_orders_details
+
+  - name: fact_orders
     description: fact table who consists of the measurements and metrics of the purchase (order) made by a customer.
     columns:
 
@@ -390,25 +386,28 @@ models:
         data_type: varchar
         description: a foreigh key to connect this table with the table "dim_addresses".
         tests:
+          - not_null
           - relationships:
               to: ref('dim_addresses')
               field: address_sk
-
-      - name: status
-        data_type: varchar
-        description: the status of an order
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['preparing','shipped','delivered']
 
       - name: shipping_service_sk
         data_type: varchar
         description: a foreigh key to connect this table with the table "dim_shipping_service".
         tests:
+          - not_null
           - relationships:
               to: ref('dim_shipping_service')
               field: shipping_service_sk
+
+      - name: promo_sk
+        data_type: varchar
+        description: a foreigh key to connect this table with the table "dim_promos".
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_promos')
+              field: promo_sk 
 
       - name: product_sk
         data_type: varchar
@@ -418,6 +417,14 @@ models:
           - relationships:
               to: ref('dim_products')
               field: product_sk
+
+      - name: status
+        data_type: varchar
+        description: the status of an order
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['preparing','shipped','delivered']
 
       - name: quantity_sold
         data_type: number
@@ -433,45 +440,47 @@ models:
           - not_null
           - positive_values
 
-      - name: gross_sales_usd
+      - name: gross_line_sales_usd
         data_type: number
         description: gross value of a sale (equal to quantity_sold * unit_price_usd)
         tests:
           - positive_values
 
-      - name: discount_amount_usd
+      - name: discount_line_amount_usd
         data_type: number
         description: extended discount amount of a line order. Equal to (discount_decimal * quantity_sold*unit_price_usd)
         tests:
           - positive_values
 
-      - name: shipping_revenue_usd
+      - name: shipping_line_revenue_usd
         data_type: number
-        description: weighted shipping revenue in usd per line of product in a given order.
+        description: weighted shipping revenue in usd per line of products in a given order.
         tests:
           - positive_values
 
-      - name: shipping_cost_usd
+      - name: shipping_line_cost_usd
         data_type: number
         description: shipping cost in usd per line of product in a given order based in the shipping_agreement.
         tests:
           - positive_values
 
-      - name: product_cost_usd
+      - name: product_line_cost_usd
         data_type: number
         description: the cost of an product based on the product_features table.
         tests:
           - positive_values
 
-      - name: diluded_oper_cost
+      - name: diluded_operative_cost_usd
         data_type: number
-        description: weighted operative costs of the company in usd based on the opeartive costs in a given month divided by the number of products sold on a certain month. 
+        description: weighted operative costs of the company in usd based on the operative costs in a given month divided by the number of products sold on a certain month. 
         tests:
           - positive_values
 
-      - name: net_sales_amout
+      - name: weight_line_lbs
         data_type: number
-        description: net sales in usd Equal to (gross_sales_usd - discount_amount_usd + shipping_cost_usd).
+        description: the total weight per line of products.
+        tests:
+          - positive_values
 
       - name: days_to_deliver
         data_type: number

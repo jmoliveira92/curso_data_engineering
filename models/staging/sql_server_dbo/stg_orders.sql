@@ -10,9 +10,11 @@
 with orders as(
 
     select * from {{ ref('src_orders_snap') }}
+
+    where dbt_valid_to is null
     
     {% if is_incremental() %}
-        where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
+        AND _fivetran_synced > (select max(date_load) from {{ this }}) 
     {% endif %}
 ),
 
@@ -39,10 +41,29 @@ stg_orders as(
         shipping_cost::decimal(24,2) as shipping_cost_usd,
         order_total::decimal(24,2) as order_total_usd,
         
-        _fivetran_synced::timestamp as _fivetran_synced
+        _fivetran_synced::timestamp as date_load
         
     from orders
-    where dbt_valid_to is null
+),
+no_order_row as(
+select * from (values ('no_order',
+                        'no_user',
+                        'no_address',
+                        'no_promo',
+                        'no_status',
+                        'not_assigned',
+                        'not_assigned',
+                        '1900-01-01',
+                        null,
+                        null,
+                        0,
+                        0,
+                        0,
+                        '1900-01-01' ))
 )
 
 select *  from stg_orders
+{% if is_incremental() == false %}
+union all
+select * from no_order_row
+{% endif %}

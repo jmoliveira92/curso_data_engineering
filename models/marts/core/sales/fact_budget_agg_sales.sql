@@ -6,7 +6,7 @@ with int_fact_sales as(
         created_at_utc
 
     from {{ ref('int_orders') }}
-    group by 1,2
+    group by 1,2,4
 ),
 stg_budget as (
     select
@@ -15,6 +15,19 @@ stg_budget as (
         target_quantity
 
     from {{ ref('stg_budget') }}
+),
+dim_products as (
+
+    select
+        product_sk,
+        product_id
+    from {{ ref('dim_products') }}
+),
+dim_date as (
+    select
+        date_key,
+        date_day
+    from {{ ref('dim_date') }}
 ),
 
 join_tables as(
@@ -29,6 +42,8 @@ join_tables as(
 
     from int_fact_sales a
     full join stg_budget b on b.product_id =   b.product_id
+    left join dim_date c on c.date_day = cast(a.created_at_utc as date)
+    left join dim_products d on d.product_id = a.product_id
     order by 1 asc
 )
 

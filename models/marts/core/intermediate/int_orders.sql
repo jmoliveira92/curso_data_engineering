@@ -1,8 +1,10 @@
-{{
-  config(
-    materialized='view'
-  )
-}}
+{{ config(
+    materialized='incremental',
+    unique_key = ['order_id','product_id'],
+    on_schema_change='fail',
+    tags = ["incremental_orders"],
+)
+    }}
 
 
 with stg_order_items as (
@@ -17,12 +19,12 @@ stg_orders as (
     select * from {{ ref('stg_orders') }}
     
     {% if is_incremental() %}
-	  where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
+	  where _fivetran_synced > (select max(date_load) from {{ this }}) 
 {% endif %}
 
 ),
 
--- an 'intermediate model' to full outer join stg_orders and stg_order_items
+-- an 'intermediate model' to join stg_orders and stg_order_items
 
 sub_int_orders as (
     select
@@ -166,7 +168,8 @@ int_orders as(
 )
 
 select * from int_orders
-/*
+
+{% if is_incremental() == false %}
 union all
 select *
 from (
@@ -189,4 +192,5 @@ from (
             null              -- deliver_at
         )
 )
-*/
+{% endif %}
+

@@ -13,8 +13,10 @@ with order_items as(
     select * 
     from {{ ref('src_order_items_snap') }}
     
+    where dbt_valid_to is null
+
     {% if is_incremental() %}
-        where _fivetran_synced > (select max(date_load) from {{ this }}) 
+        AND _fivetran_synced > (select max(date_load) from {{ this }}) 
     {% endif %}
 ),
 
@@ -26,7 +28,7 @@ select
     quantity::int as quantity_sold,                -- potencial field for a measure
     _fivetran_synced as date_load
 from order_items
-where dbt_valid_to is null
+
 )
 
 select *  from renamed_casted

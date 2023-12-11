@@ -1,6 +1,7 @@
 with promos as (
     select *
     from {{ ref('src_promos_snap') }}
+    where dbt_valid_to is null 
 ),
 
 no_promo_row as(
@@ -14,7 +15,6 @@ select
     decode(status,'','inactive',null,'inactive',status)::varchar(50) as promo_status,
     _fivetran_synced as date_load
 from promos
---where dbt_valid_to is null 
 )
 
 select * from stg_promos

@@ -26,7 +26,7 @@ fact_budget as(
 
     from stg_budget a
     left join dim_products b on b.product_id = a.product_id
-    left join dim_date c on c.date_day = a.date_day
+    left join dim_date c on c.date_day = cast(a.month_budget as date)
 )
 
 select * from fact_budget

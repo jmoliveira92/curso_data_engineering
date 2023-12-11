@@ -9,4 +9,4 @@ with stg_product_features as(
     from {{ ref('src_product_features_snap') }}
     where dbt_valid_to is null
 )
-select * from stg_product_features
+select * from stg_product_features order by product_id

@@ -1,0 +1,124 @@
+version: 2
+
+models:
+  - name: accounting
+    description: ""
+    columns:
+      - name: scope
+        data_type: varchar
+        description: ""
+
+      - name: type
+        data_type: varchar
+        description: ""
+
+      - name: vendor
+        data_type: varchar
+        description: ""
+
+      - name: category
+        data_type: varchar
+        description: ""
+
+      - name: description
+        data_type: varchar
+        description: ""
+
+      - name: invoice_date
+        data_type: date
+        description: ""
+
+      - name: total
+        data_type: float
+        description: ""
+
+
+
+
+  - name: personas
+    description: ""
+    columns:
+      - name: first_name
+        data_type: varchar
+        description: ""
+
+      - name: last_name
+        data_type: varchar
+        description: ""
+
+      - name: department
+        data_type: varchar
+        description: ""
+
+      - name: income_year
+        data_type: number
+        description: ""
+
+
+  - name: price_history
+    description: ""
+    columns:
+      - name: product_id
+        data_type: varchar
+        description: ""
+
+      - name: price
+        data_type: float
+        description: ""
+
+      - name: name
+        data_type: varchar
+        description: ""
+
+      - name: begin_eff_date
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: end_eff_date
+        data_type: timestamp_ntz
+        description: ""
+
+
+  - name: product_features
+    description: ""
+    columns:
+      - name: product_id
+        data_type: varchar
+        description: ""
+
+      - name: product_cost
+        data_type: float
+        description: ""
+
+      - name: product_weight
+        data_type: float
+        description: ""
+
+      - name: begin_eff_date
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: end_eff_date
+        data_type: timestamp_ntz
+        description: ""
+
+
+
+  - name: shipping_agreements
+    description: ""
+    columns:
+      - name: shipping_service
+        data_type: varchar
+        description: ""
+
+      - name: price_usd_per_lbs
+        data_type: float
+        description: ""
+
+      - name: begin_eff_date
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: end_eff_date
+        data_type: timestamp_ntz
+        description: ""
