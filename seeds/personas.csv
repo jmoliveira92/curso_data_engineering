@@ -1,4 +1,4 @@
-first_name,last_name,department,income_year
-Gandalf,The Wizard,admin,60000
-Jon,Snow Flake,operations,55000
-Don Vito,Corleone,marketing,50000
+emp_id,first_name,last_name,department,gross_income_year
+1,Gandalf,The Wizard,admin,60000
+2,Jon,Snow Flake,operations,55000
+3,Don Vito,Corleone,marketing,50000

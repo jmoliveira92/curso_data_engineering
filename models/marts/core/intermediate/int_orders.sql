@@ -11,7 +11,7 @@ with stg_order_items as (
     select * from {{ ref('stg_order_items') }}
     
     {% if is_incremental() %}
-	  where date_load > (select max(date_load) from {{ this }}) 
+	  where date_load > (select max(order_items_load) from {{ this }}) 
     {% endif %}
 ),
 
@@ -19,7 +19,7 @@ stg_orders as (
     select * from {{ ref('stg_orders') }}
     
     {% if is_incremental() %}
-	  where _fivetran_synced > (select max(date_load) from {{ this }}) 
+	  where date_load > (select max(orders_load) from {{ this }}) 
 {% endif %}
 
 ),
@@ -40,7 +40,9 @@ sub_int_orders as (
         b.tracking_id,
         b.created_at_utc,                                  
         b.estimated_delivery_at_utc,                       --10
-        b.delivered_at_utc
+        b.delivered_at_utc,
+        a.date_load as order_items_load,
+        b.date_load as orders_load
 
     from stg_order_items as a
     full outer join stg_orders as b on b.order_id = a.order_id
@@ -122,13 +124,13 @@ int_orders as(
         a.user_id,
         a.address_id,
         a.product_id,
-        a.promo_id,
+        a.promo_id,    -- line 5
 
     -- measures
         a.quantity_sold,
         c.price_usd as unit_price_usd,
         -- gross_sales_usd
-        (a.quantity_sold * c.price_usd) as gross_line_sales_usd,
+        (a.quantity_sold * c.price_usd) as gross_line_sales_usd,   -- line 8
 
         -- discount_amount_usd_per_line 
         ((f.promo_discount_percent/100) * (a.quantity_sold*c.price_usd))::decimal(24,2) as discount_line_amount_usd,
@@ -140,24 +142,29 @@ int_orders as(
         round(g.shipping_cost_usd*(a.quantity_sold/h.total_quantity_sold) ,2) as shipping_line_revenue_usd,
 
         -- total_shipping_cost_agreement (this is the real 'shipping_cost')
-        (a.quantity_sold * d.product_weight_lbs * e.price_usd_per_lbs ) as shipping_line_cost_usd,
+        round((a.quantity_sold * d.product_weight_lbs * e.price_usd_per_lbs ), 2) as shipping_line_cost_usd, -- line 12
 
         -- diluded_operative_cost_per_line
-        (a.quantity_sold * b.monthly_operative_usd / b.monthly_quantity_sold)::decimal(24,4) as diluded_operative_cost_usd,
+        round((a.quantity_sold * b.monthly_operative_usd / b.monthly_quantity_sold) , 2)::decimal(24,4) as diluded_operative_cost_usd,
     
     --shipping_related
         a.status,
-        a.shipping_service,
-        a.tracking_id,
-        (d.product_weight_lbs * a.quantity_sold) as weight_line_lbs,
+        a.shipping_service,                 
+        --a.tracking_id,                     --just-in-case
+        (d.product_weight_lbs * a.quantity_sold) as weight_line_lbs,    --line 16
 
     --dates related
-        a.created_at_utc,                                  
-        a.estimated_delivery_at_utc,
-        a.delivered_at_utc,
-        a.created_at_utc::date as created_at_date
+        a.created_at_utc as created_at_utc,                                  
+        a.estimated_delivery_at_utc as estimated_delivery_at_utc,
+        a.delivered_at_utc as delivered_at_utc,
+        a.created_at_utc::date as created_at_date,                      -- line 20
+        a.order_items_load,
+        a.orders_load,
+
+        '{{invocation_id}}' as batch_id
           
     from sub_int_orders a
+    
     left join int_operative_costs b on b.month = date_trunc('month', a.created_at_utc)
     left join stg_price_history c on c.product_id = a.product_id AND a.created_at_utc between c.begin_eff_date and c.end_eff_date
     left join stg_product_features d on d.product_id = a.product_id AND a.created_at_utc between d.begin_eff_date and d.end_eff_date
@@ -167,8 +174,15 @@ int_orders as(
     left join int_count_orders_quantity h on h.order_id = a.order_id
 )
 
-select * from int_orders
+select * from int_orders order by 17
 
+
+
+
+
+
+
+/*
 {% if is_incremental() == false %}
 union all
 select *
@@ -199,3 +213,4 @@ from (
 )
 {% endif %}
 
+*/

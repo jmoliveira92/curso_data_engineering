@@ -26,7 +26,10 @@ select
     order_id::varchar(50) as order_id,
     product_id::varchar(50) as product_id,
     quantity::int as quantity_sold,                -- potencial field for a measure
-    _fivetran_synced as date_load
+    _fivetran_synced as date_load,
+    
+    '{{invocation_id}}' as batch_id
+
 from order_items
 
 )

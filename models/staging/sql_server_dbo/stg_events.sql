@@ -30,7 +30,9 @@ select
     decode(order_id,'','no_order',null,'no_order',order_id)::varchar(50) as order_id,
     created_at::timestamp as created_at_utc,     
     page_url::varchar(256) as page_url,
-    _FIVETRAN_SYNCED as date_load
+    _FIVETRAN_SYNCED as date_load,
+
+    '{{invocation_id}}' as batch_id
 
 from snap_events
 order by 7 asc

@@ -41,10 +41,17 @@ stg_orders as(
         shipping_cost::decimal(24,2) as shipping_cost_usd,
         order_total::decimal(24,2) as order_total_usd,
         
-        _fivetran_synced::timestamp as date_load
+        _fivetran_synced as date_load,
+        '{{invocation_id}}' as batch_id
         
     from orders
-),
+)
+
+select *  from stg_orders
+
+
+
+/*
 no_order_row as(
 select * from (values ('no_order',
                         'no_user',
@@ -67,3 +74,4 @@ select *  from stg_orders
 union all
 select * from no_order_row
 {% endif %}
+*/

@@ -29,4 +29,4 @@ fact_budget as(
     left join dim_date c on c.date_day = cast(a.month_budget as date)
 )
 
-select * from fact_budget
+select * from fact_budget order by 4

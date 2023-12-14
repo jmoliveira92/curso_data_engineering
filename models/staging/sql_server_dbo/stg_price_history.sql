@@ -9,4 +9,4 @@ with stg_price_history as(
     from {{ ref("src_price_history_snap") }}
     where dbt_valid_to is null
 )
-select * from stg_price_history
+select * from stg_price_history order by 3

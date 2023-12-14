@@ -61,4 +61,4 @@ fact_events_users as(
     order by 8 desc
 )
 
-select * from fact_events_users
+select * from fact_events_users order by 7 desc, 8 desc

@@ -2,7 +2,7 @@
 {{ config(
     materialized='incremental',
     unique_key = 'event_id',
-    on_schema_change='fail',
+    on_schema_change='append_new_columns',
     tags = ["incremental_events"],
     ) 
     }}
@@ -47,10 +47,13 @@ fact_events as(
         d.product_sk,
         a.order_id,
         f.date_key,
+        to_char(date_trunc('hour', a.created_at_utc), 'HH24MI') as time_key,
         a.created_at_utc,
         a.created_at_utc::time as time,
         --a.page_url
-        date_load
+        date_load,
+
+        '{{invocation_id}}' as batch_id
 
     from stg_events a 
     left join dim_users b on b.user_id = a.user_id
@@ -60,6 +63,6 @@ fact_events as(
     order by 2,9
 )
 
-select * from fact_events
+select * from fact_events order by 7
 
 
