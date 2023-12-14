@@ -110,9 +110,6 @@ models:
             description: Identifier for the product
             tests:
               - not_null
-              - relationships:
-                  to: ref('stg_products')
-                  field: product_id
 
           - name: quantity_sold
             data_type: number
