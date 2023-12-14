@@ -124,6 +124,11 @@ models:
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
+          - name: batch_id
+            data_type: varchar
+            description: a hash to identify when the incremental model was run.
+
+
       - name: stg_orders
         description: Staging table for orders data. It has less granularity than "order_items", which aggregates the order products and have more relavant information.
         columns:
@@ -209,6 +214,9 @@ models:
             data_type: timestamp_ntz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
 
+          - name: batch_id
+            data_type: varchar
+            description: a hash to identify when the incremental model was run.
 
 
 
@@ -449,3 +457,27 @@ models:
           - name: end_eff_date
             data_type: timestamp_ntz
             description: The ending effective date of the price.
+
+
+      - name: stg_wages
+        description: Table containing the employeer id and the dates (by month) when they receive a payment.
+        columns:
+          - name: emp_id
+            data_type: varchar
+            description: unique identifier of employee
+
+          - name: full_name
+            data_type: varchar
+            description: A concatenation of the first and last name of the employee.
+
+          - name: department
+            data_type: varchar
+            description: The department where a employee works at the moment.
+
+          - name: wage_month
+            data_type: date
+            description: The date (month) the employee received a salary.
+
+          - name: monthly_wage
+            data_type: number
+            description: The anual salary divided by 12 months, giving the monthly payment/wage to a particular employee.

@@ -147,3 +147,15 @@ models:
       - name: created_at_date
         data_type: date
         description: the same column of created_at_utc but in a date format.
+
+      - name: order_items_load
+        data_type: varchar
+        description: the timestamp when the records from "order_items" was load into bronze stage.
+
+      - name: orders_load
+        data_type: varchar
+        description: the timestamp when the record from "orders" was load into bronze stage.
+
+      - name: batch_id
+        data_type: varchar
+        description: a hash to identify when the incremental model was run.

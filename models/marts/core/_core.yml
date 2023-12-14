@@ -345,9 +345,25 @@ models:
               to: ref('dim_date')
               field: date_key
 
+      - name: time_key
+        data_type: varchar
+        description: extracted time from the Timestamp column "created_at_utc" in Coordinated Universal Time (UTC) and converted to a key, for later join the time_table in the BI report.
+
       - name: created_at_utc
         data_type: timestamp
         description: timestamp indicating when the event was created (hour,minute,second).
+
+      - name: time
+        data_type: time
+        description: timestamp indicating when the event was created (hour,minute,second).
+
+      - name: date_load
+        data_type: varchar
+        description: the timestamp when the record was load into bronze stage.
+
+      - name: batch_id
+        data_type: varchar
+        description: a hash to identify when the incremental model was run.
 
 
 
@@ -494,7 +510,37 @@ models:
         data_type: timestamp_ltz
         description: Timestamp indicating when the order was created in Coordinated Universal Time (UTC).
 
-      - name: time
-        data_type: time
-        description: extracted time from the Timestamp column "created_at_utc" in Coordinated Universal Time (UTC).
+      - name: created_at_date
+        data_type: date
+        description: date extraction from the field "created_at_utc" Timestamp (UTC).
 
+      - name: time_key
+        data_type: varchar
+        description: extracted time from the Timestamp column "created_at_utc" in Coordinated Universal Time (UTC) and converted to a key, for later join the time_table in the BI report.
+
+      - name: orders_load
+        data_type: varchar
+        description: the timestamp when the record was load into bronze stage.
+
+      - name: batch_id
+        data_type: varchar
+        description: a hash to identify when the incremental model was run.
+
+  - name: fact_agg_costs
+    description: A aggregated table with the opeartive and structural costs, grouped by scope, category and month.
+    columns:
+          - name: scope
+            data_type: varchar
+            description: Refers to the type of cost in the company.
+
+          - name: category
+            data_type: varchar
+            description: The category of cost of the accounting entry.
+
+          - name: month
+            data_type: date
+            description: The month of that particular aggregated row.
+
+          - name: total_usd
+            data_type: number
+            description: The total amount of an aggregated expense.

@@ -122,3 +122,16 @@ models:
       - name: end_eff_date
         data_type: timestamp_ntz
         description: The ending effective date where the shipping agreement start.
+
+
+
+  - name: wages
+    description: Table containing the employeer id and the dates (by month) when they receive a payment.
+    columns:
+      - name: emp_id
+        data_type: varchar
+        description: unique identifier of employee
+
+      - name: wage_month
+        data_type: date
+        description: The date (month) the employee received a salary.
