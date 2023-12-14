@@ -1,35 +1,37 @@
 
 {{ config(
     materialized='incremental',
-    unique_key = 'order_id',
-    on_schema_change='fail'
-    ) 
+    unique_key = 'id',
+    on_schema_change='fail',
+    tags = ["incremental_orders"],
+)
     }}
 
 
 with order_items as(
 
     select * 
-    from {{ source('src_sql_server_dbo', 'order_items') }}
+    from {{ ref('src_order_items_snap') }}
+    
+    where dbt_valid_to is null
 
-{% if is_incremental() %}
-
-	  where _fivetran_synced > (select max(date_load) from {{ this }}) 
-
-      --{{this}} represents the model that is materialize "at this moment", not the one at the time of the incremental.
-
-{% endif %}
-
-
+    {% if is_incremental() %}
+        AND _fivetran_synced > (select max(date_load) from {{ this }}) 
+    {% endif %}
 ),
 
 renamed_casted as(
 select
+    id::varchar(100) as id,
     order_id::varchar(50) as order_id,
     product_id::varchar(50) as product_id,
-    quantity::int as quantity_sold,
-    _FIVETRAN_SYNCED as date_load
+    quantity::int as quantity_sold,                -- potencial field for a measure
+    _fivetran_synced as date_load,
+    
+    '{{invocation_id}}' as batch_id
+
 from order_items
+
 )
 
 select *  from renamed_casted

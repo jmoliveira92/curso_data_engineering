@@ -4,13 +4,13 @@
 
 select 
     count(distinct user_id)-1 as number_of_users -- '-1' serves to do not take into account the "no_user"
-from dim_customers
+from dim_users
 
 2. En promedio, ¿cuánto tiempo tarda un pedido desde que se realiza hasta que se entrega?
 
 select 
     round(avg(days_to_deliver),2) as avg_days_delivery
-from fact_sales_orders_details
+from fact_orders
 --RESPOSTA: 3.83 days
 
 3. ¿Cuántos usuarios han realizado una sola compra? ¿Dos compras? ¿Tres o más compras?
@@ -22,16 +22,16 @@ from fact_sales_orders_details
 - *Nota: debe considerar una compra como un solo pedido. En otras palabras, si un usuario realiza un pedido de 3 productos, se considera que ha realizado 1 compra.*
 - En promedio, ¿Cuántas sesiones únicas tenemos por hora?
 */
-with dim_customers as (
-    select * from {{ ref('dim_customers') }}
+with dim_users as (
+    select * from {{ ref('dim_users') }}
 ),
 
-fact_sales_orders_details as(
-    select * from {{ ref('fact_sales_orders_details') }}
+fact_orders as(
+    select * from {{ ref('fact_orders') }}
 ),
 
-dim_sales_orders as (
-    select * from {{ ref('dim_sales_orders') }}
+int_orders as (
+    select * from {{ ref('int_orders') }}
 ),
 
 fact_events as(
@@ -41,13 +41,13 @@ fact_events as(
 resp_1 as(
     select 
         count(distinct user_id)-1 as number_of_users -- '-1' serves to do not take into account the "no_user"
-    from dim_customers
+    from dim_users
 ),
 
 resp_2 as(
     select 
     round(avg(days_to_deliver),2) as avg_days_delivery
-from fact_sales_orders_details
+from fact_orders
 ),
 
 resp_3 as(
@@ -57,9 +57,9 @@ select
     count(number_of_purchases) as number_of_users
 from(
         select
-            user_sk,
-            count(distinct order_sk) as number_of_purchases
-        from dim_sales_orders
+            user_id,
+            count(distinct order_id) as number_of_purchases
+        from int_orders
         group by 1
         having number_of_purchases = 1 OR number_of_purchases = 2 OR number_of_purchases = 3)
 group by 1

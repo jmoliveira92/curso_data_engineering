@@ -27,6 +27,9 @@ models:
             data_type: timestamp_tz
             description: shows the timestamp in which a record was loaded to the source table.
 
+
+
+
       - name: stg_events
         description: source table for events data, mainly the behaviour of our prospects in the website.
         columns:
@@ -55,11 +58,15 @@ models:
           - name: event_type
             data_type: varchar
             description: the type of the event_id (e.g., 'page_view', 'add-to-cart', 'checkout', 'package_shipped').
+ 
           - name: product_id
             data_type: varchar
             description: primary key identifier for the product associated with the event.
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_products')
+                  field: product_id
 
           - name: order_id
             data_type: varchar
@@ -72,14 +79,19 @@ models:
             description: Timestamp indicating when the event occurred in Coordinated Universal Time (UTC).
             tests:
               - not_null
+
           - name: page_url
             data_type: varchar
             description: URL associated with the event.
             tests:
               - not_null
+
           - name: date_load
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+
+
 
       - name: stg_order_items
         description: Staging table for order items data. It has the max granularity, means, a order_id can have several product_id with different quantities.
@@ -111,6 +123,11 @@ models:
           - name: date_load
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+          - name: batch_id
+            data_type: varchar
+            description: a hash to identify when the incremental model was run.
+
 
       - name: stg_orders
         description: Staging table for orders data. It has less granularity than "order_items", which aggregates the order products and have more relavant information.
@@ -145,6 +162,9 @@ models:
             description: Identifier for the promotion.
             tests:
               - not_null
+              - relationships:
+                  to: ref('stg_promos')
+                  field: promo_id
 
           - name: status
             data_type: varchar
@@ -180,7 +200,6 @@ models:
             data_type: number
             description: Cost of the order in US dollars.
    
-
           - name: shipping_cost_usd
             data_type: number
             description: Shipping cost of an order in US dollars.
@@ -194,6 +213,12 @@ models:
           - name: _fivetran_synced
             data_type: timestamp_ntz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+          - name: batch_id
+            data_type: varchar
+            description: a hash to identify when the incremental model was run.
+
+
 
       - name: stg_products
         description: Source table for product data.
@@ -211,7 +236,7 @@ models:
             tests:
               - not_null
 
-          - name: unit_price_usd
+          - name: msrp_price_usd
             data_type: number
             description: Unit price of the product in USD.
             tests:
@@ -223,10 +248,11 @@ models:
             tests:
               - not_null
 
-
-          - name: date_load
+          - name: updated_at
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+
 
       - name: stg_promos
         description: Staging table for promotional data.
@@ -238,11 +264,10 @@ models:
               - unique
               - not_null
 
-          - name: promo_discount
+          - name: promo_discount_percent
             data_type: float
             description: Discount percentage for the promotion.
             tests:
-              - unique
               - not_null
 
           - name: promo_status
@@ -253,12 +278,12 @@ models:
               - accepted_values:
                   values: ['active','inactive']
 
-          - name: row_deleted
-            data_type: boolean
-            description: Indicator of whether the record is deleted from FIVETRAN.
           - name: date_load
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+
+
 
       - name: stg_state
         description: Staging table for state data.
@@ -269,6 +294,9 @@ models:
             tests:
               - unique
               - not_null
+
+
+
 
       - name: stg_users
         description: Staging table for user/customer data.
@@ -325,3 +353,131 @@ models:
           - name: date_load
             data_type: timestamp_tz
             description: Timestamp indicating when the data was loaded into the staging table, including time zone information.
+
+      - name: stg_accounting
+        description: A stage table containing accounting information of the company.
+        columns:
+          - name: scope
+            data_type: varchar
+            description: Refers to the type of cost in the company.
+
+          - name: type
+            data_type: varchar
+            description: the type of cost.
+
+          - name: vendor
+            data_type: varchar
+            description: The vendor associated with the entry.
+
+          - name: category
+            data_type: varchar
+            description: The category of cost of the accounting entry.
+
+          - name: description
+            data_type: varchar
+            description: A description of the entry.
+
+          - name: invoice_date
+            data_type: date
+            description: The date of the invoice.
+
+          - name: total_invoice
+            data_type: number
+            description: The total amount associated with the invoice.
+
+
+
+
+      - name: stg_shipping_agreements
+        description: Table containing shipping agreements information related with delivers.
+        columns:
+          - name: shipping_service
+            data_type: varchar
+            description: The name of the shipping service provider.
+
+          - name: price_usd_per_lbs
+            data_type: number
+            description: The agreed price per pound for shipping.
+
+          - name: begin_eff_date
+            data_type: timestamp_ntz
+            description: The beginning effective date where the shipping agreement start.
+
+          - name: end_eff_date
+            data_type: timestamp_ntz
+            description: The ending effective date where the shipping agreement start.
+
+
+
+      - name: stg_product_features
+        description: a stage table containing features information for products.
+        columns:
+          - name: product_id
+            data_type: varchar
+            description: The identifier of the product.
+
+          - name: product_cost_usd
+            data_type: number
+            description: The cost of the product at a certain point in time.
+
+          - name: product_weight_lbs
+            data_type: number
+            description: The weight of the product.
+
+          - name: begin_eff_date
+            data_type: timestamp_ntz
+            description: The beginning effective date of the product cost.
+
+
+          - name: end_eff_date
+            data_type: timestamp_ntz
+            description: The ending effective date of the product cost.       
+
+
+
+      - name: stg_price_history
+        description: a stage table containing historical price information for products.
+        columns:
+          - name: product_id
+            data_type: varchar
+            description: The identifier of the product.
+
+          - name: price_usd
+            data_type: number
+            description: The price of the product at a certain point in time.
+
+          - name: product_name
+            data_type: varchar
+            description: The name of the product.
+
+          - name: begin_eff_date
+            data_type: timestamp_ntz
+            description: The beginning effective date of the price.
+
+          - name: end_eff_date
+            data_type: timestamp_ntz
+            description: The ending effective date of the price.
+
+
+      - name: stg_wages
+        description: Table containing the employeer id and the dates (by month) when they receive a payment.
+        columns:
+          - name: emp_id
+            data_type: varchar
+            description: unique identifier of employee
+
+          - name: full_name
+            data_type: varchar
+            description: A concatenation of the first and last name of the employee.
+
+          - name: department
+            data_type: varchar
+            description: The department where a employee works at the moment.
+
+          - name: wage_month
+            data_type: date
+            description: The date (month) the employee received a salary.
+
+          - name: monthly_wage
+            data_type: number
+            description: The anual salary divided by 12 months, giving the monthly payment/wage to a particular employee.

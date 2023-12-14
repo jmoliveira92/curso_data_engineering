@@ -3,6 +3,9 @@ with addresses as(
     select * 
     from {{ source('src_sql_server_dbo', 'addresses') }}
 ),
+no_address_row as(
+     select * from (values('no_address','unknown','unknown','unknown','unknown','1900-01-01'))
+),
 
 stg_addresses as(
 select
@@ -16,3 +19,5 @@ from addresses
 )
 
 select *  from stg_addresses
+union all
+select * from no_address_row

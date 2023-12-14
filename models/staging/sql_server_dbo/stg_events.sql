@@ -1,11 +1,26 @@
 
-with stg_events as(
+{{ config(
+    materialized='incremental',
+    unique_key = 'event_id',
+    on_schema_change='fail',
+    tags = ["incremental_events"],
+    ) 
+    }}
+
+
+with snap_events as(
 
     select * 
-    from {{ source('src_sql_server_dbo', 'events') }}
+    from {{ ref('src_events_snap') }}
+
+    where dbt_valid_to is null
+
+    {% if is_incremental() %}
+        AND _fivetran_synced > (select max(date_load) from {{ this }}) 
+    {% endif %}
 ),
 
-renamed_casted as(
+stg_events as(
 select
     event_id::varchar(50) as event_id,
     session_id::varchar(50) as session_id,
@@ -15,10 +30,12 @@ select
     decode(order_id,'','no_order',null,'no_order',order_id)::varchar(50) as order_id,
     created_at::timestamp as created_at_utc,     
     page_url::varchar(256) as page_url,
-    _FIVETRAN_SYNCED as date_load
+    _FIVETRAN_SYNCED as date_load,
 
-from stg_events
-order by 2 asc
+    '{{invocation_id}}' as batch_id
+
+from snap_events
+order by 7 asc
 )
 
-select *  from renamed_casted
+select *  from stg_events

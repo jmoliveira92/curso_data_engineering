@@ -1,19 +1,25 @@
 with products as(
 
     select * 
-    from {{ source('src_sql_server_dbo', 'products') }}
+    from {{ ref('src_products_snap') }}
+),
+no_product_row as(
+select * from (values ('no_product','no_product',0,1,'2140-01-01' ))
 ),
 
 stg_products as(
-select
-    product_id::varchar(50) as product_id,
-    name::varchar(50) as product_name,
-    price::decimal(24,2) as unit_price_usd,
-    inventory::int as inventory,
-    _FIVETRAN_SYNCED as date_load
-from products
+    select
+        product_id::varchar(50) as product_id,
+        name::varchar(50) as product_name,
+        price::decimal(24,2) as msrp_price_usd,   --MSRP (Manufacturer's Suggested Retail Price) 
+        inventory::int as inventory,
+        dbt_updated_at::timestamp as updated_at
+
+    from products
+    where dbt_valid_to is null
 )
 
 select *  from stg_products
-
+union all 
+select * from no_product_row
 

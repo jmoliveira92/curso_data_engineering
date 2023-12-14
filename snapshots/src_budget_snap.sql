@@ -1,4 +1,4 @@
-{% snapshot budget_snapshot %}
+{% snapshot src_budget_snap %}
 
 {{
     config(

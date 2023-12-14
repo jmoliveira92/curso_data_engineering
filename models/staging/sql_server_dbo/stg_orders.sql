@@ -2,23 +2,20 @@
 {{ config(
     materialized='incremental',
     unique_key = 'order_id',
-    on_schema_change='fail'
+    on_schema_change='fail',
+    tags = ["incremental_orders"],
     ) 
     }}
 
 with orders as(
 
-    select *
-    from {{ source('src_sql_server_dbo', 'orders') }}
+    select * from {{ ref('src_orders_snap') }}
 
-{% if is_incremental() %}
-
-	  where _fivetran_synced > (select max(_fivetran_synced) from {{ this }}) 
-
-      --{{this}} represents the model that is materialize "at this moment", not the one at the time of the incremental.
-
-{% endif %}
-
+    where dbt_valid_to is null
+    
+    {% if is_incremental() %}
+        AND _fivetran_synced > (select max(date_load) from {{ this }}) 
+    {% endif %}
 ),
 
 stg_orders as(
@@ -39,13 +36,42 @@ stg_orders as(
         estimated_delivery_at::timestamp as estimated_delivery_at_utc,
         delivered_at::timestamp as delivered_at_utc,
 
-    -- measures:
+    -- potential measures:
         order_cost::decimal(24,2) as order_cost_usd,
         shipping_cost::decimal(24,2) as shipping_cost_usd,
         order_total::decimal(24,2) as order_total_usd,
-        _fivetran_synced::timestamp as _fivetran_synced
+        
+        _fivetran_synced as date_load,
+        '{{invocation_id}}' as batch_id
         
     from orders
 )
 
 select *  from stg_orders
+
+
+
+/*
+no_order_row as(
+select * from (values ('no_order',
+                        'no_user',
+                        'no_address',
+                        'no_promo',
+                        'no_status',
+                        'not_assigned',
+                        'not_assigned',
+                        '1900-01-01',
+                        null,
+                        null,
+                        0,
+                        0,
+                        0,
+                        '1900-01-01' ))
+)
+
+select *  from stg_orders
+{% if is_incremental() == false %}
+union all
+select * from no_order_row
+{% endif %}
+*/

@@ -50,8 +50,8 @@ with fact_events as (
     select * from {{ ref('fact_events') }}
 ),
 
-dim_customers as(
-    select * from {{ ref('dim_customers') }}
+dim_users as(
+    select * from {{ ref('dim_users') }}
 ),
 
 event_type as(
@@ -101,7 +101,7 @@ exercicio as(
         
     from fact_events a
 
-    left join dim_customers b on b.user_sk = a.user_sk
+    left join dim_users b on b.user_sk = a.user_sk
     left join session_lenght c on c.user_sk = a.user_sk
     left join event_type d on d.session_id = a.session_id
     group by 1,2,3,4,5,6,7,8,9,10,11

@@ -1,3 +1,13 @@
+
+{{ config(
+    materialized='incremental',
+    unique_key = 'event_id',
+    on_schema_change='append_new_columns',
+    tags = ["incremental_events"],
+    ) 
+    }}
+
+
 with stg_events as(
     select 
         event_id,
@@ -8,20 +18,21 @@ with stg_events as(
         order_id,
         created_at_utc as created_at_utc,
         created_at_utc::date as created_at_utc_date,
-        page_url
+        page_url,
+        date_load
+
     from {{ ref('stg_events') }}
+
+    {% if is_incremental() %}
+	  where date_load > (select max(date_load) from {{ this }}) 
+    {% endif %}
 ),
-dim_customers as (
-    select * from {{ ref('dim_customers') }}
-),
-dim_event_types as(
-    select * from {{ ref('dim_event_types') }}
+
+dim_users as (
+    select * from {{ ref('dim_users') }}
 ),
 dim_products as(
     select * from {{ ref('dim_products') }}
-),
-dim_sales_orders as(
-    select * from {{ ref('dim_sales_orders') }}
 ),
 dim_date as(
     select * from {{ ref('dim_date') }}
@@ -32,21 +43,26 @@ fact_events as(
         a.event_id,
         a.session_id,
         b.user_sk,
-        c.event_types_sk,
-        a.event_type, --optional, just here for readability
+        a.event_type,
         d.product_sk,
-        e.order_sk,
+        a.order_id,
         f.date_key,
+        to_char(date_trunc('hour', a.created_at_utc), 'HH24MI') as time_key,
         a.created_at_utc,
-        a.page_url
+        a.created_at_utc::time as time,
+        --a.page_url
+        date_load,
+
+        '{{invocation_id}}' as batch_id
 
     from stg_events a 
-    left join dim_customers b on b.user_id = a.user_id
-    left join dim_event_types c on c.event_type= a.event_type
+    left join dim_users b on b.user_id = a.user_id
     left join dim_products d on d.product_id = a.product_id
-    left join dim_sales_orders e on e.order_id = a.order_id
     left join dim_date f on f.date_day = a.created_at_utc_date
     
     order by 2,9
 )
-select * from fact_events
+
+select * from fact_events order by 7
+
+

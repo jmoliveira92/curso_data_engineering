@@ -12,29 +12,29 @@ Para ello nos solicitan que indiquemos:
 - Total de productos diferentes que ha comprado.
 
 */
-with dim_customers as (
-    select * from {{ ref('dim_customers') }}
+with dim_users as (
+    select * from {{ ref('dim_users') }}
 ),
 dim_addresses as (
     select * from {{ ref('dim_addresses') }}
 ),
-dim_sales_orders as (
-    select * from {{ ref('dim_sales_orders') }}
+int_orders as (
+    select * from {{ ref('int_orders') }}
 ),
-fact_sales_orders_details as (
-    select * from {{ ref('fact_sales_orders_details') }}
+fact_orders as (
+    select * from {{ ref('fact_orders') }}
 ),
 
 agg_fact as(
     select
         user_sk,
         count(order_sk) as total_number_orders,
-        sum(gross_sales_usd) as total_sales_usd,
-        sum(shipping_cost_usd) as total_shipping_cost_usd,
-        sum(discount_amount_usd) as total_discount_usd,
+        sum(gross_line_sales_usd) as total_sales_usd,
+        sum(shipping_line_revenue_usd) as total_shipping_revenue_usd,
+        sum(discount_amount_usd_per_line) as total_discount_usd,
         count(product_sk) as total_quantity_products,
         count(distinct product_sk) as total_different_products
-    from fact_sales_orders_details
+    from fact_orders
     group by 1
     order by 3 desc
 ),
@@ -58,10 +58,10 @@ exercicio as (
         decode(c.total_quantity_products,null,0,c.total_quantity_products) as total_quantity_products,
         decode(c.total_different_products,null,0,c.total_different_products) as total_different_products
 
-    from dim_customers a
+    from dim_users a
     left join dim_addresses b on b.address_sk = a.address_sk
     full join agg_fact c on c.user_sk = a.user_sk
-    --left join dim_sales_orders y on y.user_sk = a.user_sk
+    --left join int_orders y on y.user_sk = a.user_sk
     order by 12 desc
 ),
 
@@ -70,16 +70,16 @@ exercicio as (
 
 -- 1. Product Performance
 
-    --Identify top-selling products by quantity_sold or gross_sales_usd.
+    --Identify top-selling products by quantity_sold or gross_line_sales_usd.
 
 top_selling_prod as(
     SELECT
     product_sk,
         SUM(quantity_sold) AS total_quantity_sold,
-        SUM(gross_sales_usd) AS total_gross_sales,
-        (SUM(gross_sales_usd)/SUM(quantity_sold)) as price_per_unit
+        SUM(gross_line_sales_usd) AS total_gross_sales,
+        (SUM(gross_line_sales_usd)/SUM(quantity_sold)) as price_per_unit
     FROM
-    fact_sales_orders_details
+    fact_orders
     GROUP BY
     product_sk
     ORDER BY
@@ -95,7 +95,7 @@ high_low_prices as(
         product_sk,
         MAX(unit_price_usd) AS highest_unit_price,
         MIN(unit_price_usd) AS lowest_unit_price
-    FROM fact_sales_orders_details
+    FROM fact_orders
     GROUP BY product_sk
 ),
 
@@ -109,7 +109,7 @@ distr_discount as(
     SELECT
         discount_usd,
         COUNT(*) AS discount_count
-    FROM fact_sales_orders_details
+    FROM fact_orders
     GROUP BY discount_usd
     ORDER BY discount_usd
 ),
@@ -121,7 +121,7 @@ avg_discount_product as(
     SELECT
         product_sk,
         round(AVG(discount_usd),3) AS avg_discount_per_product
-    FROM fact_sales_orders_details
+    FROM fact_orders
     GROUP BY product_sk
 ),
 --select * from avg_discount_product
@@ -129,7 +129,7 @@ avg_discount_product as(
 avg_discount_overall as(
     SELECT
 	    round(AVG(discount_usd),3) AS avg_discount_overall
-    FROM fact_sales_orders_details
+    FROM fact_orders
 ),
 --select * from avg_discount_overall
 
@@ -141,8 +141,8 @@ avg_discount_overall as(
 revenue_trend as(
     SELECT
         DATE_TRUNC('hour', created_at_utc) AS hours,
-        SUM(gross_sales_usd) AS total_gross_sales
-    FROM fact_sales_orders_details
+        SUM(gross_line_sales_usd) AS total_gross_sales
+    FROM fact_orders
     GROUP BY 1
     ORDER BY 1
 ),
@@ -153,10 +153,10 @@ revenue_trend as(
 compare_amounts as(
     SELECT
         product_sk,
-        SUM(gross_sales_usd) AS total_gross_sales,
+        SUM(gross_line_sales_usd) AS total_gross_sales,
         SUM(net_sales_amout) AS total_net_sales,
         SUM(discount_amount_usd) AS total_discount
-    FROM fact_sales_orders_details
+    FROM fact_orders
     GROUP BY product_sk
 ),
 --select * from compare_amounts
@@ -167,8 +167,8 @@ compare_amounts as(
 trend_sales as(
     SELECT
         EXTRACT(hour FROM created_at_utc) AS hours,
-        round(AVG(gross_sales_usd),2) AS avg_hourly_sales
-    FROM fact_sales_orders_details
+        round(AVG(gross_line_sales_usd),2) AS avg_hourly_sales
+    FROM fact_orders
     GROUP BY hours
     ORDER BY hours
 ),
@@ -182,7 +182,7 @@ ship_cost_impact as(
     SELECT
         product_sk,
         round(AVG(shipping_cost_usd),2) AS avg_shipping_cost
-    FROM fact_sales_orders_details
+    FROM fact_orders
     GROUP BY product_sk
     ORDER BY avg_shipping_cost DESC
 ),
@@ -196,7 +196,7 @@ high_prod_ship_costs as(
         product_sk,
         round(AVG(shipping_cost_usd),2) AS avg_shipping_cost,
         round(AVG(net_sales_amout),2) AS avg_net_sales
-    FROM fact_sales_orders_details
+    FROM fact_orders
     GROUP BY product_sk
     ORDER BY avg_shipping_cost DESC
 ),
@@ -210,7 +210,7 @@ high_prod_ship_costs as(
 avg_days_deliver as(
     SELECT
         AVG(days_to_deliver) AS avg_days_to_deliver
-    FROM fact_sales_orders_details
+    FROM fact_orders
 ),
 --select * from avg_days_deliver
 
@@ -220,9 +220,9 @@ short_long_deliver_time as(
     SELECT
         order_sk,
         days_to_deliver
-    FROM fact_sales_orders_details
-    WHERE days_to_deliver < (SELECT AVG(days_to_deliver) - 1 * STDDEV(days_to_deliver) FROM fact_sales_orders_details)
-    OR days_to_deliver > (SELECT AVG(days_to_deliver) + 1 * STDDEV(days_to_deliver) FROM fact_sales_orders_details)
+    FROM fact_orders
+    WHERE days_to_deliver < (SELECT AVG(days_to_deliver) - 1 * STDDEV(days_to_deliver) FROM fact_orders)
+    OR days_to_deliver > (SELECT AVG(days_to_deliver) + 1 * STDDEV(days_to_deliver) FROM fact_orders)
     order by 2 desc
     ),
 --select * from short_long_deliver_time
@@ -234,7 +234,7 @@ ship_deliver_relation as(
     SELECT
         shipping_cost_usd,
         AVG(days_to_deliver) AS avg_delivery_time
-    FROM fact_sales_orders_details
+    FROM fact_orders
     GROUP BY shipping_cost_usd
     order by 1 desc
 ),
@@ -247,7 +247,7 @@ ship_deliver_relation as(
 accuracy_est_deliver as(
     SELECT
         AVG(CASE WHEN estimated_delivery_at_utc = delivered_at_utc THEN 1 ELSE 0 END)*100 AS accuracy_percentage
-    FROM fact_sales_orders_details
+    FROM fact_orders
 )
 select * from accuracy_est_deliver
     -- Compare estimated and actual delivery dates
@@ -268,7 +268,7 @@ select * from accuracy_est_deliver
 
 -- 9. Customer Segmentation:
 
-    -- Segment customers based on their purchasing behavior.
+    -- Segment users based on their purchasing behavior.
 
     -- Analyze whether certain customer segments tend to receive higher discounts or have longer delivery times.
 
