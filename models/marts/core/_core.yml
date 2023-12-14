@@ -96,7 +96,7 @@ models:
 
 
    
-  - name: dim_customers
+  - name: dim_users
     description: a dimensional table who shows the information of our users.
     columns:
       - name: date_key
@@ -144,16 +144,6 @@ models:
         description: Timestamp indicating when the record was last updated, in UTC.
 
 
-  - name: dim_event_types
-    description: a dimensional table who shows the types of events on our website.
-    columns:
-      - name: event_types_sk
-        data_type: varchar
-        description: a surrogate key generated to our table through "event_type".
-
-      - name: event_type
-        data_type: varchar
-        description: the type of the event_id (e.g., 'page_view', 'add-to-cart', 'checkout', 'package_shipped').
 
 
   - name: dim_products
