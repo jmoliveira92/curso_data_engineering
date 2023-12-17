@@ -9,7 +9,7 @@ The project relates with an e-commerce shop, and aims to develop a BI model infr
 - Check the **Power BI dashboard** on the pdf file **E-Commerce PowerBI Dashboard_pdf** in this repo.
 - Check the full presentation in Tomeapp.ai : https://tome.app/oli-e3c/data-engineering-final-project-pineaple-express-llc-clq3yh6c80akrps77mbzwh1bt
 
-In this project, we utilized various tools and technologies as depicted in the following image:
+In this project, I utilized various tools and technologies as depicted in the following image:
 
 ![Project_tools2](https://github.com/jmoliveira92/curso_data_engineering/assets/142105466/60472f86-5387-446d-a4cb-72b41bc228d9)
 
