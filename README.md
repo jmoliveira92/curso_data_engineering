@@ -1,16 +1,14 @@
-# curso_data_engineering
+# Course_Data_Engineering
 Data Enginnering course provided by Civica Software S.L. from October 2023 - December 2023 (3 months).
+
+The code you see in this repo is related with **DBT** transformations.
+Check the **Power BI dashboard** on the pdf file **Dashboard_podf** in this repo.
 
 In this project, we utilized various tools and technologies as depicted in the following image:
 
 ![Project_tools2](https://github.com/jmoliveira92/curso_data_engineering/assets/142105466/60472f86-5387-446d-a4cb-72b41bc228d9)
 
-The code you see in this repo is relalet with **DBT** transformations.
-
-Check the **Power BI dashboard** on the pdf file **Dashboard_podf** in this repo.
-
 ## Project Roadmap
-
 In summary, the project roadmap followed the steps outlined below:
 
 1. **Data Sources:** The sources are stored in a SQL Server along with a budget document in Google Sheets format (.xlsx).
