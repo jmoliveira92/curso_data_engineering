@@ -5,7 +5,7 @@ Data Enginnering course provided by Civica Software S.L. from October 2023 - Dec
 
 The project relates with an e-commerce shop, and aims to develop a BI model infrastructure to monitor and analyze the business, generate insights for increasing sales and marketing, and measure operational costs for reduction.
 
-- The code you see in this repo is related with **DBT** transformations.
+- The code you see in this repo is related with **DBT** transformations (build Silver/Bronze stages. I also used advanced concepts such as **incrementals** and **snapshots**).
 - Check the **Power BI dashboard** on the pdf file **Dashboard_podf** in this repo.
 - Check the full presentation in Tomeapp.ai : https://tome.app/oli-e3c/data-engineering-final-project-pineaple-express-llc-clq3yh6c80akrps77mbzwh1bt
 
