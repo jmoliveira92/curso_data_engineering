@@ -17,11 +17,11 @@ In this project, I utilized various tools and technologies as depicted in the fo
 In summary, the project roadmap followed the steps outlined below:
 
 1. **Data Sources:** The sources are stored in a SQL Server along with a budget document in Google Sheets format (.xlsx).
-2. **Data Warehousing with Snowflake:** In Snowflake, our Data Warehouse (DWH), we implemented the Lakehouse paradigm with three distinct databases, following the Bronze, Silver, and Gold layers. This was achieved using an ELT (Extract, Load, Transform) approach.
-3. **Data Exploration:** We conducted data exploration in Snowflake to familiarize ourselves with the database. This step helped us understand the required modeling and transformations to build our Silver and Gold layers.
-4. **Bronze Layer:** For the Bronze layer, we imported data from SQL Server using Fivetran to populate the Snowflake Bronze database.
-5. **dbt Modeling:** We used dbt (data build tool) to model the data and perform necessary transformations for the different layers. Note: The Bronze and Silver layers are in the Development environment, while the Gold (final) layer is in the Production environment.
-6. **Power BI Integration:** After data modeling, we imported the project from Snowflake to Power BI via "Direct Query." In Power BI, we created visualizations to address the initial questions posed at the beginning of the project.
+2. **Data Warehousing with Snowflake:** In Snowflake, our Data Warehouse (DWH), I implemented the Lakehouse paradigm with three distinct databases, following the Bronze, Silver, and Gold layers. This was achieved using an ELT (Extract, Load, Transform) approach.
+3. **Data Exploration:** I conducted data exploration in Snowflake to familiarize myself with the database. This step helped me to understand the required modeling and transformations to build the Silver and Gold layers.
+4. **Bronze Layer:** For the Bronze layer, I imported data from SQL Server using Fivetran to populate the Snowflake Bronze database.
+5. **dbt Modeling:** I used dbt (data build tool) to model the data and perform necessary transformations for the different layers. Note: The Bronze and Silver layers are in the Development environment, while the Gold (final) layer is in the Production environment.
+6. **Power BI Integration:** After data modeling, I imported the project from Snowflake to Power BI via "Direct Query." In Power BI, I created visualizations to address the initial questions posed at the beginning of the project (check the presentation to more information).
 
 ## Initial Database
 ![bd_original1](https://github.com/jmoliveira92/curso_data_engineering/assets/142105466/192a0a54-029e-4f8c-b49f-77a1bfd42b7c)
