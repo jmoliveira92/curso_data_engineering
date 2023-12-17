@@ -37,4 +37,8 @@ In order to enrich the model, I added more business concepts, namely: product pu
 ### Fact Orders
 ![code_fact_orders](https://github.com/jmoliveira92/curso_data_engineering/assets/142105466/38f812c8-02b9-4839-9d00-731c518e53c4)
 
+## Power BI Example
+![sales_power BI](https://github.com/jmoliveira92/curso_data_engineering/assets/142105466/b90f4aea-99c6-4662-aad4-55960b4c7f4d)
+
+
 
