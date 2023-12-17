@@ -1,10 +1,12 @@
+For contact me please reach me in Linkedin: https://www.linkedin.com/in/joaofmoliveira/ 
+
 # Course_Data_Engineering
 Data Enginnering course provided by Civica Software S.L. from October 2023 - December 2023 (3 months).
 
 The project relates with an e-commerce shop, and aims to develop a BI model infrastructure to monitor and analyze the business, generate insights for increasing sales and marketing, and measure operational costs for reduction.
 
-The code you see in this repo is related with **DBT** transformations.
-Check the **Power BI dashboard** on the pdf file **Dashboard_podf** in this repo.
+- The code you see in this repo is related with **DBT** transformations.
+- Check the **Power BI dashboard** on the pdf file **Dashboard_podf** in this repo.
 
 In this project, we utilized various tools and technologies as depicted in the following image:
 
