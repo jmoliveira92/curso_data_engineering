@@ -1,4 +1,4 @@
-For contact me please reach me in Linkedin: https://www.linkedin.com/in/joaofmoliveira/ 
+For contact please reach me in my Linkedin: https://www.linkedin.com/in/joaofmoliveira/ 
 
 # Course_Data_Engineering
 Data Enginnering course provided by Civica Software S.L. from October 2023 - December 2023 (3 months).
@@ -7,6 +7,7 @@ The project relates with an e-commerce shop, and aims to develop a BI model infr
 
 - The code you see in this repo is related with **DBT** transformations.
 - Check the **Power BI dashboard** on the pdf file **Dashboard_podf** in this repo.
+- Check the full presentation in Tomeapp.ai : https://tome.app/oli-e3c/data-engineering-final-project-pineaple-express-llc-clq3yh6c80akrps77mbzwh1bt
 
 In this project, we utilized various tools and technologies as depicted in the following image:
 
